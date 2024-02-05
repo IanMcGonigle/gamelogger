@@ -25,7 +25,9 @@ export default function TeamCard (props: TeamCardProps) {
       <AddGoal
         team={us}
         players={players}
-        onComplete={() => {}}
+        onComplete={(g:IGoal) => {
+          setGoals([...goals, g]);
+        }}
         onCancel={() => {}}
       />
       {/* <div className='AddGoal'>

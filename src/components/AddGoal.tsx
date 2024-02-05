@@ -12,9 +12,9 @@ export interface AddGoalProps {
 export default function AddGoal (props: AddGoalProps) {
   const { players, team, onComplete} = props;
   const [addingGoal, setAddingGoal] = useState<boolean>(false);
-  const [time, setTime] = useState<number>();
+  const [time, setTime] = useState<number|string>('');
   const [addingPlayer, setAddingPlayer] = useState<boolean>(false);
-  const [goalScorer, setGoalScorer] = useState<IPlayer|void>();
+  const [goalScorer, setGoalScorer] = useState<IPlayer|null>(null);
   const [teammates, setTeammates] = useState<IPlayer[]>(players.filter((p: IPlayer) => p.teamId === team.id));
   const [selectValue, setSelectValue] = useState<number|string>(-1);
 
@@ -43,6 +43,7 @@ export default function AddGoal (props: AddGoalProps) {
           value={selectValue}
           onChange={(e) => {
             console.log(e.target.value);
+            setSelectValue(e.target.value);
             if (e.target.value === 'addNewPlayer') {
               setAddingPlayer(true);
               setSelectValue(-1);
@@ -69,7 +70,7 @@ export default function AddGoal (props: AddGoalProps) {
           onComplete={(p: IPlayer) => {
             setTeammates([...teammates, p]);
             setGoalScorer(p);
-            setSelectValue(-1);
+            setSelectValue(playerString(p));
             setAddingPlayer(false);
           }}
           onCancel={() => {
@@ -91,6 +92,10 @@ export default function AddGoal (props: AddGoalProps) {
           <button
             onClick={() => {
               onComplete({ team, player: goalScorer, time });
+              setAddingGoal(false);
+              setTime('');
+              setGoalScorer(null);
+              setSelectValue(-1);
             }}
           >
             save goal
