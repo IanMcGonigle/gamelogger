@@ -17,7 +17,9 @@ export interface IGame {
 export interface IGoal {
   team: ITeam;
   player: IPlayer;
-  time: number;
+  time: number | string;
+  ownGoal: boolean;
+  penaltyKick: boolean;
 }
 
 export interface ITeam {

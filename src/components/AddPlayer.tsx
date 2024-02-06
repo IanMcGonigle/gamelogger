@@ -18,14 +18,10 @@ function AddPlayer(props: AddPlayerProps) {
     };
   }
   const reset = () =>{
-    console.log('before: ', getData());
     setFirstName('')
     setLastName('')
     setJerseyNumber('');
     setTeamId(-1);
-    console.log('after: ', getData());
-
-
   };
   return (
     <div>
@@ -37,6 +33,7 @@ function AddPlayer(props: AddPlayerProps) {
           id='playerFirstName'
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
+          autoFocus
         />
       </div>
       <div className='inputRow'>

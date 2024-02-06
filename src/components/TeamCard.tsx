@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import AddGoal from './AddGoal';
-import { IGoal, TeamCardProps, IPlayer } from '../types';
+import { IGoal, TeamCardProps } from '../types';
 
 
 
@@ -9,13 +9,13 @@ export default function TeamCard (props: TeamCardProps) {
   const [goals, setGoals] = useState<IGoal[] | []>([]);
   return (
     <div>
-      <h2>{us.name}</h2>
+      <h2>{us.name} : {goals.length}</h2>
       {goals && goals.length > 0 && (
         <ul>
           {goals.map((g: IGoal) => {
             return (
               <li key={g.player.firstName}>
-                #{g.player.jerseyNumber} {g.player.firstName}{' '}
+                {g.player.firstName}{' '}
                 {g.player.lastName}
               </li>
             );
@@ -30,19 +30,6 @@ export default function TeamCard (props: TeamCardProps) {
         }}
         onCancel={() => {}}
       />
-      {/* <div className='AddGoal'>
-        <select>
-          {players
-            .filter((p: IPlayer) => p.teamId === us.id)
-            .map((p: IPlayer) => (
-              <option key={p.firstName}>
-                #{p.jerseyNumber} {p.firstName}{' '}
-                {p.lastName}
-              </option>
-            ))}
-        </select>
-        <input type="number" placeholder='minute scored'/>
-      </div> */}
     </div>
   );
 }

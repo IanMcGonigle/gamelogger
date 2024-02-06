@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, {useState, useReducer} from 'react';
 import { ITeam, IPlayer } from '../types';
+import { AddGoalActions, AddGoalReducer, AddGoalState, initialState } from '../reducers/AddGoalReducer';
 import AddPlayer from './AddPlayer';
 
 export interface AddGoalProps {
@@ -11,19 +12,20 @@ export interface AddGoalProps {
 
 export default function AddGoal (props: AddGoalProps) {
   const { players, team, onComplete} = props;
-  const [addingGoal, setAddingGoal] = useState<boolean>(false);
-  const [time, setTime] = useState<number|string>('');
-  const [addingPlayer, setAddingPlayer] = useState<boolean>(false);
-  const [goalScorer, setGoalScorer] = useState<IPlayer|null>(null);
-  const [teammates, setTeammates] = useState<IPlayer[]>(players.filter((p: IPlayer) => p.teamId === team.id));
-  const [selectValue, setSelectValue] = useState<number|string>(-1);
+  const firstState: AddGoalState = {
+    ...initialState,
+    teamMates: players.filter((p: IPlayer) => p.teamId === team.id),
+  };
+  const [state, dispatch] = useReducer(AddGoalReducer, firstState);
+
+  const { addingGoal, addingNewPlayer, teamMates, playerSelectValue, time, penaltyKick, ownGoal, goalScorer } = state;
 
   const playerString = (player:IPlayer):string => {
     return `${player.jerseyNumber} ${player.firstName} ${player.lastName}`;
   }
 
   const playerByName = (name:string):IPlayer|void => {
-    return teammates.find((p: IPlayer) => playerString(p) === name);
+    return teamMates.find((p: IPlayer) => playerString(p) === name);
   }
 
   return (
@@ -31,71 +33,107 @@ export default function AddGoal (props: AddGoalProps) {
       {!addingGoal && (
         <button
           onClick={() => {
-            setAddingGoal(!addingGoal);
+            dispatch({ type: AddGoalActions.addGoal });
           }}
         >
           Add Goal
         </button>
       )}
-      {addingGoal && !addingPlayer && (
+      {addingGoal && !addingNewPlayer && (
         <select
           id='playerSelect'
-          value={selectValue}
+          value={playerSelectValue}
           onChange={(e) => {
-            console.log(e.target.value);
-            setSelectValue(e.target.value);
             if (e.target.value === 'addNewPlayer') {
-              setAddingPlayer(true);
-              setSelectValue(-1);
-              return;
-            }
-            const p = playerByName(e.target.value);
-            if (p) {
-              setGoalScorer(p);
+              dispatch({ type: AddGoalActions.addNewPlayer, payload: true });
+            } else {
+              dispatch({
+                type: AddGoalActions.addGoalScorer,
+                payload: {
+                  goalScorer: playerByName(e.target.value),
+                  playerSelectValue: e.target.value,
+                },
+              });
             }
           }}
         >
           <option value='-1'>Select goal scorer</option>
           <option value='addNewPlayer'>Add player</option>
-          {teammates.map((p: IPlayer) => (
-            <option key={p.firstName} value={playerString(p)}>
-              #{p.jerseyNumber} {p.firstName} {p.lastName}
-            </option>
-          ))}
+          {teamMates.map((p: IPlayer) => {
+            return (
+              <option key={p.firstName} value={playerString(p)}>
+                #{p.jerseyNumber} {p.firstName} {p.lastName}
+              </option>
+            );
+          })}
         </select>
       )}
-      {addingGoal && addingPlayer && (
+      {addingGoal && addingNewPlayer && (
         <AddPlayer
           teams={[team]}
           onComplete={(p: IPlayer) => {
-            setTeammates([...teammates, p]);
-            setGoalScorer(p);
-            setSelectValue(playerString(p));
-            setAddingPlayer(false);
+            const ps = playerString(p);
+            console.log(ps)
+            dispatch({
+              type: AddGoalActions.addNewGoalScorer,
+              payload: {
+                goalScorer: p,
+                playerSelectValue: ps,
+              },
+            });
           }}
           onCancel={() => {
-            setAddingPlayer(false);
-            setSelectValue(-1);
+            dispatch({ type: AddGoalActions.addNewPlayer, payload: false });
           }}
         />
       )}
       {addingGoal && (
         <>
           <input
-            type='number'
+            type='text'
+            pattern='[0-9\+ ]*'
             placeholder='minute scored'
             value={time}
             onChange={(e) => {
-              setTime(Number(e.target.value));
+              dispatch({
+                type: AddGoalActions.setTime,
+                payload: e.target.value,
+              });
+            }}
+          />
+          <br></br>
+          <label htmlFor='penaltyKick'>Penalty Kick</label>
+          <input
+            type='checkbox'
+            name='penaltyKick'
+            id='penaltyKick'
+            checked={penaltyKick}
+            onChange={(e) => {
+              dispatch({
+                type: AddGoalActions.penaltyKick,
+                payload: e.target.checked,
+              });
+            }}
+          />
+          <br></br>
+          <label htmlFor='ownGoal'>Own Goal</label>
+          <input
+            type='checkbox'
+            name='ownGoal'
+            id='ownGoal'
+            checked={ownGoal}
+            onChange={(e) => {
+              dispatch({
+                type: AddGoalActions.ownGoal,
+                payload: e.target.checked,
+              });
             }}
           />
           <button
+            disabled={!(goalScorer && time)}
             onClick={() => {
               onComplete({ team, player: goalScorer, time });
-              setAddingGoal(false);
-              setTime('');
-              setGoalScorer(null);
-              setSelectValue(-1);
+              dispatch({ type: AddGoalActions.reset });
             }}
           >
             save goal
