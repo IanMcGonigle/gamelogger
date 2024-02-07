@@ -3,10 +3,11 @@ import { IPlayer, ITeam, AddPlayerProps } from '../types';
 
 function AddPlayer(props: AddPlayerProps) {
   const { teams, onComplete, onCancel } = props;
+  const selectedTeam = teams.length === 1 ? teams[0].id : '-1';
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [jerseyNumber, setJerseyNumber] = useState<string>('');
-  const [teamId, setTeamId] = useState<number>(-1);
+  const [teamId, setTeamId] = useState<number | string>(selectedTeam);
 
   const getData = ():IPlayer => {
     return {

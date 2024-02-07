@@ -55,8 +55,9 @@ export function AddGoalReducer(state:AddGoalState = initialState, action:IAction
     case AddGoalActions.ownGoal:
       return {
         ...state,
-        ownGoal: payload,
-        goalScorer: payload ? null : state.goalScorer,
+        ownGoal: payload.checked,
+        teamMates: payload.teamMates,
+        goalScorer: payload.goalScorer ? null : state.goalScorer,
       };
 
     case AddGoalActions.addNewPlayer:

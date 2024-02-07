@@ -32,7 +32,7 @@ export default function GameRecorder (props: GameRecorderProps) {
         {awayTeam !== undefined ? (
           <>
             <p>away</p>
-            <TeamCard us={awayTeam} them={awayTeam} players={players} />
+            <TeamCard us={awayTeam} them={homeTeam} players={players} />
           </>
         ) : (
           <>

@@ -1,17 +1,18 @@
-import React, {useState, useReducer} from 'react';
+import React, {useReducer} from 'react';
 import { ITeam, IPlayer } from '../types';
 import { AddGoalActions, AddGoalReducer, AddGoalState, initialState } from '../reducers/AddGoalReducer';
 import AddPlayer from './AddPlayer';
 
 export interface AddGoalProps {
   team: ITeam;
+  opponent?:ITeam;
   players: Array<IPlayer>;
   onComplete: Function
   onCancel: Function
 }
 
 export default function AddGoal (props: AddGoalProps) {
-  const { players, team, onComplete} = props;
+  const { players, team, onComplete, opponent} = props;
   const firstState: AddGoalState = {
     ...initialState,
     teamMates: players.filter((p: IPlayer) => p.teamId === team.id),
@@ -125,7 +126,10 @@ export default function AddGoal (props: AddGoalProps) {
             onChange={(e) => {
               dispatch({
                 type: AddGoalActions.ownGoal,
-                payload: e.target.checked,
+                payload: {
+                  checked:e.target.checked,
+                  teamMates: players.filter((p: IPlayer) => p.teamId === opponent?.id)
+                }
               });
             }}
           />

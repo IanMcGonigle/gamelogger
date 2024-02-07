@@ -1,9 +1,10 @@
 export interface IPlayer {
-  firstName: string,
-  lastName: string,
-  jerseyNumber: string,
-  teamId: number,
-  goals: number,
+  id?: number | string;
+  firstName: string;
+  lastName: string;
+  jerseyNumber: string;
+  teamId: number | string;
+  goals: number;
 };
 
 export interface IGame {
@@ -23,7 +24,7 @@ export interface IGoal {
 }
 
 export interface ITeam {
-  id: number,
+  id: number|string,
   name: string,
 };
 

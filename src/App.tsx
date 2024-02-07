@@ -1,65 +1,82 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import logo from './logo.svg';
 import { IPlayer, ITeam } from './types';
 import AddPlayer from './components/AddPlayer'
 import './App.css';
 import GameRecorder from './components/GameRecorder';
 import dummy from './dummyPlayers';
+import {db, colletionTeams, colletionPlayers} from './database/firebase';
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  setDoc,
+  getDocs,
+  doc,
+} from 'firebase/firestore';
 
-const teams = [
-{id: 0, name:'Arsenal'},
-{id: 1, name:'Aston Villa'},
-{id: 2, name:'Bournemouth'},
-{id: 3, name:'Brentford'},
-{id: 4, name:'Brighton & Hove Albion'},
-{id: 5, name:'Burnley'},
-{id: 6, name:'Chelsea'},
-{id: 7, name:'Crystal Palace'},
-{id: 8, name:'Everton'},
-{id: 9, name:'Fulham'},
-{id: 10, name:'Liverpool'},
-{id: 11, name:'Luton Town'},
-{id: 12, name:'Manchester City'},
-{id: 13, name:'Manchester United'},
-{id: 14, name:'Newcastle United'},
-{id: 15, name:'Nottingham Forest'},
-{id: 16, name:'Sheffield United'},
-{id: 17, name:'Tottenham Hotspur'},
-{id: 18, name:'West Ham United'},
-{id: 19, name:'Wolverhampton Wanderers'},
-];
 
 function App() {
 
   const [players, setPlayers] = useState<IPlayer[] | []>(dummy);
+  const [teams, setTeams] = useState<ITeam[]>([]);
 
-  const addPlayer = (player:IPlayer) => {
-    setPlayers( [...players, player]);
-    console.log(players)
-  }
-  const teamById = (id:number):string => {
-    const sel = teams.find( (team:ITeam) => {
-      return team.id === id;
-    });
+  const [teamName, setTeamName] = useState('');
 
-    return sel?.name || '';
+  const loadTeams = async () => {
+      const querySnapshot = await getDocs(colletionTeams);
+      const newTeams: Array<ITeam> = querySnapshot.docs.map((item) => {
+        return { id: item.id, name: item.data().name } as ITeam;
+      });
+      setTeams(newTeams);
   }
+  const loadPlayers = async () => {
+      const querySnapshot = await getDocs(colletionPlayers);
+      const newPlayers: Array<IPlayer> = querySnapshot.docs.map((item) => {
+        const { firstName, lastName, jerseyNumber, teamId, goals } = item.data();
+        return {
+          id: item.id,
+          firstName,
+          lastName,
+          jerseyNumber,
+          teamId,
+          goals,
+        };
+      });
+      setPlayers(newPlayers);
+  }
+
+  useEffect(() => {
+    loadTeams();
+    loadPlayers();
+    // initialzeLFC();
+    // initializeTeams();
+  }, []);
+
+  // const addPlayer = (player:IPlayer) => {
+  //   setPlayers( [...players, player]);
+  //   console.log(players)
+  // }
+  // const teamById = (id:number):string => {
+  //   const sel = teams.find( (team:ITeam) => {
+  //     return team.id === id;
+  //   });
+
+  //   return sel?.name || '';
+  // }
   return (
     <div className='App'>
       <div className='App-header'>
-        <GameRecorder teams={teams} players={players}/>
-        <hr />
-        {/* <h2>All players added</h2>
-        <ul>
-          {players.map( (p:IPlayer  )=> {
-            return (
-              <li key={p.firstName + p.lastName + p.jerseyNumber}>
-                #{p.jerseyNumber} {p.firstName} {p.lastName} for {teamById(p.teamId)}
-              </li>
-            );
-          })}
-        </ul> */}
-        {/* <AddPlayer teams={teams} onComplete={addPlayer} onCancel={() => {}} /> */}
+        <GameRecorder teams={teams} players={players} />
+        {/* <hr /> */}
+
+        {/* <input
+          type='text'
+          id='teamName'
+          placeholder='add team'
+          onChange={(e) => setTeamName(e.target.value)}
+        />
+        <button onClick={() => addTeam()}>Add Team</button> */}
       </div>
     </div>
   );

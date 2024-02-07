@@ -5,7 +5,7 @@ import { IGoal, TeamCardProps } from '../types';
 
 
 export default function TeamCard (props: TeamCardProps) {
-  const { us, players } = props;
+  const { us, them, players } = props;
   const [goals, setGoals] = useState<IGoal[] | []>([]);
   return (
     <div>
@@ -24,6 +24,7 @@ export default function TeamCard (props: TeamCardProps) {
       )}
       <AddGoal
         team={us}
+        opponent={them}
         players={players}
         onComplete={(g:IGoal) => {
           setGoals([...goals, g]);
