@@ -1,3 +1,11 @@
+import { DocumentData } from 'firebase/firestore';
+import { GameState } from '../reducers/GameRecorderReducer';
+
+export interface IAction {
+  type: string;
+  payload?: any;
+}
+
 export interface IPlayer {
   id?: number | string;
   firstName: string;
@@ -8,7 +16,8 @@ export interface IPlayer {
 };
 
 export interface IGame {
-  id: number,
+  id: number;
+  date: string;
   home: ITeam;
   away: ITeam;
   homeGoals: Array<IGoal>;
@@ -18,7 +27,7 @@ export interface IGame {
 export interface IGoal {
   team: ITeam;
   player: IPlayer;
-  time: number | string;
+  time?: number | string;
   ownGoal: boolean;
   penaltyKick: boolean;
 }
@@ -26,6 +35,9 @@ export interface IGoal {
 export interface ITeam {
   id: number|string,
   name: string,
+  wins?:number,
+  losses?:number,
+  draws?:number,
 };
 
 export type AddPlayerProps = {
@@ -35,12 +47,15 @@ export type AddPlayerProps = {
 };
 
 export type GameRecorderProps = {
+  gameData: GameState;
   teams: Array<ITeam>;
   players: Array<IPlayer>;
+  id: string;
 };
 
 export type TeamCardProps = {
   us:ITeam,
-  them?:ITeam
+  them?:ITeam,
+  onGoal: Function,
   players:Array<IPlayer>
 };

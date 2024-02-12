@@ -1,4 +1,4 @@
-import { IPlayer } from "../types"
+import { IPlayer, IAction } from '../types';
 
 export type AddGoalState = {
   addingGoal: boolean;
@@ -21,11 +21,6 @@ export const initialState: AddGoalState = {
   playerSelectValue: '-1',
   penaltyKick: false,
 };
-
-export interface IAction {
-  type:string;
-  payload?:any
-}
 
 export enum AddGoalActions {
   addGoal = 'addGoal',

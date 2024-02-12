@@ -1,27 +1,34 @@
 import React, { useState, useEffect} from 'react';
-import logo from './logo.svg';
-import { IPlayer, ITeam } from './types';
-import AddPlayer from './components/AddPlayer'
-import './App.css';
+import { Routes, Route, Outlet, Link } from 'react-router-dom';
 import GameRecorder from './components/GameRecorder';
+import { IPlayer, ITeam } from './types';
+import { InitialGameState } from './reducers/GameRecorderReducer';
+import './App.css';
 import dummy from './dummyPlayers';
-import {db, colletionTeams, colletionPlayers} from './database/firebase';
+import { StateContext } from './context/StateContext';
 import {
-  collection,
-  addDoc,
-  serverTimestamp,
-  setDoc,
+  colletionTeams,
+  colletionPlayers,
+  colletionGames,
+} from './database/firebase';
+import {
   getDocs,
-  doc,
+  DocumentData,
 } from 'firebase/firestore';
+import MainNavigation from './components/MainNavigation';
+import GamesPage from './pages/GamesPage';
+import PlayersPage from './pages/PlayersPage';
+import AddPlayerPage from './pages/AddPlayerPage';
+import HomePage from './pages/HomePage';
+import AddGamePage from './pages/AddGamePage';
 
 
 function App() {
 
   const [players, setPlayers] = useState<IPlayer[] | []>(dummy);
   const [teams, setTeams] = useState<ITeam[]>([]);
-
-  const [teamName, setTeamName] = useState('');
+  const [games, setGames] = useState<DocumentData[]>([])
+  const [currentGame, setCurrentGame] = useState<DocumentData | undefined>();
 
   const loadTeams = async () => {
       const querySnapshot = await getDocs(colletionTeams);
@@ -45,40 +52,73 @@ function App() {
       });
       setPlayers(newPlayers);
   }
+  const loadGames = async () => {
+    const querySnapshot = await getDocs(colletionGames);
+    console.log('games')
+    console.log(querySnapshot.docs);
+    setGames(querySnapshot.docs);
+  }
 
   useEffect(() => {
     loadTeams();
     loadPlayers();
+    loadGames();
     // initialzeLFC();
     // initializeTeams();
   }, []);
 
-  // const addPlayer = (player:IPlayer) => {
-  //   setPlayers( [...players, player]);
-  //   console.log(players)
-  // }
-  // const teamById = (id:number):string => {
-  //   const sel = teams.find( (team:ITeam) => {
-  //     return team.id === id;
-  //   });
+  const getGameData = () => {
+    if(currentGame && Object.hasOwn(currentGame, 'data')){
+      return currentGame.data();
+    } else {
 
-  //   return sel?.name || '';
-  // }
+      return InitialGameState;
+    }
+  }
+
   return (
-    <div className='App'>
-      <div className='App-header'>
-        <GameRecorder teams={teams} players={players} />
-        {/* <hr /> */}
-
-        {/* <input
-          type='text'
-          id='teamName'
-          placeholder='add team'
-          onChange={(e) => setTeamName(e.target.value)}
-        />
-        <button onClick={() => addTeam()}>Add Team</button> */}
+    <StateContext.Provider
+      value={{ games, teams, players, gameState: getGameData() }}
+    >
+      <div className='App'>
+        <div className='App-header'>
+          <MainNavigation />
+          <Routes>
+            <Route path='games' element={<GamesPage />}></Route>
+            <Route path='players' element={<PlayersPage />}></Route>
+            <Route path='add-player' element={<AddPlayerPage />}></Route>
+            <Route path='add-game' element={<AddGamePage />}></Route>
+            <Route path='/' element={<HomePage />}></Route>
+          </Routes>
+          {/* {games
+            .filter((g: DocumentData) => {
+              return g.id === '4eqTwl4a1vRcKqNgcfzd';
+            })
+            .map((g: DocumentData) => {
+              return <h2>{g.data().date}</h2>;
+            })}
+          {currentGame && (
+            <GameRecorder
+              teams={teams}
+              players={players}
+              gameData={getGameData()}
+              id={currentGame.id}
+            />
+          )}
+          {!currentGame && (
+            <button
+              onClick={() => {
+                const docRef = doc(colletionGames);
+                console.log(docRef);
+                setCurrentGame(docRef);
+              }}
+            >
+              Add New Game
+            </button>
+          )} */}
+        </div>
       </div>
-    </div>
+    </StateContext.Provider>
   );
 }
 
