@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   collection,
   addDoc,
@@ -48,6 +49,7 @@ export default function GamesPage() {
               <td>Date</td>
               <td>Home</td>
               <td>Away</td>
+              <td>&nbsp;</td>
             </tr>
             {games.map((g: DocumentData) => {
               console.log(g.data());
@@ -57,6 +59,7 @@ export default function GamesPage() {
                   <td>{date}</td>
                   <td>{`${home?.name}: ${homeGoals?.length}`}</td>
                   <td>{`${away?.name}: ${awayGoals?.length}`}</td>
+                  <td><Link to={`edit/${g.id}`}>Edit</Link></td>
                 </tr>
               );
             })}

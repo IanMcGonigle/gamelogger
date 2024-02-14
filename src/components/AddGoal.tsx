@@ -1,4 +1,6 @@
 import React, {useReducer} from 'react';
+import { doc, increment, updateDoc } from 'firebase/firestore';
+import { db } from '../database/firebase';
 import { ITeam, IPlayer } from '../types';
 import { AddGoalActions, AddGoalReducer, AddGoalState, initialState } from '../reducers/AddGoalReducer';
 import AddPlayer from './AddPlayer';
@@ -74,7 +76,7 @@ export default function AddGoal (props: AddGoalProps) {
           teams={[team]}
           onComplete={(p: IPlayer) => {
             const ps = playerString(p);
-            console.log(ps)
+            console.log(p)
             dispatch({
               type: AddGoalActions.addNewGoalScorer,
               payload: {
@@ -135,7 +137,9 @@ export default function AddGoal (props: AddGoalProps) {
           />
           <button
             disabled={!(goalScorer && time)}
-            onClick={() => {
+            onClick={ async () => {
+              const playerDocRef = doc(db, 'players', goalScorer.id);
+              await updateDoc(playerDocRef, { goals: increment(1) });
               onComplete({ team, player: goalScorer, time });
               dispatch({ type: AddGoalActions.reset });
             }}

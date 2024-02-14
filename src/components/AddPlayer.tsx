@@ -1,5 +1,7 @@
-import React, { useState }from 'react'
-import { IPlayer, ITeam, AddPlayerProps } from '../types';
+import React, { useState }from 'react';
+import { doc, setDoc } from 'firebase/firestore';
+import { colletionPlayers } from '../database/firebase';
+import { AddPlayerProps } from '../types';
 
 function AddPlayer(props: AddPlayerProps) {
   const { teams, onComplete, onCancel } = props;
@@ -9,7 +11,7 @@ function AddPlayer(props: AddPlayerProps) {
   const [jerseyNumber, setJerseyNumber] = useState<string>('');
   const [teamId, setTeamId] = useState<number | string>(selectedTeam);
 
-  const getData = ():IPlayer => {
+  const getData = () => {
     return {
       firstName: firstName,
       lastName: lastName,
@@ -60,7 +62,7 @@ function AddPlayer(props: AddPlayerProps) {
         <select
           id='teamSelect'
           value={teamId}
-          onChange={(e) => setTeamId(Number(e.target.value))}
+          onChange={(e) => setTeamId(e.target.value)}
         >
           <option value='-1'>Select a team</option>
           {teams.map((team) => {
@@ -74,8 +76,15 @@ function AddPlayer(props: AddPlayerProps) {
       </div>
       <div className='inputRow'>
         <button
-          onClick={() => {
-            onComplete(getData());
+          onClick={ async () => {
+            const docRef = doc(colletionPlayers);
+            const playerData = getData();
+            try {
+                await setDoc(docRef, playerData);
+                onComplete( {...playerData, id:docRef.id});
+            } catch (error) {
+                console.error(error);
+            }
             reset();
           }}
         >

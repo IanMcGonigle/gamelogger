@@ -10,9 +10,14 @@ import {
   colletionTeams,
   colletionPlayers,
   colletionGames,
+  db
 } from './database/firebase';
 import {
+  doc,
   getDocs,
+  onSnapshot,
+  collection,
+  query,
   DocumentData,
 } from 'firebase/firestore';
 import MainNavigation from './components/MainNavigation';
@@ -21,11 +26,12 @@ import PlayersPage from './pages/PlayersPage';
 import AddPlayerPage from './pages/AddPlayerPage';
 import HomePage from './pages/HomePage';
 import AddGamePage from './pages/AddGamePage';
+import EditGamePage from './pages/EditGamePage';
 
 
 function App() {
 
-  const [players, setPlayers] = useState<IPlayer[] | []>(dummy);
+  const [players, setPlayers] = useState<IPlayer[] | []>([]);
   const [teams, setTeams] = useState<ITeam[]>([]);
   const [games, setGames] = useState<DocumentData[]>([])
   const [currentGame, setCurrentGame] = useState<DocumentData | undefined>();
@@ -38,7 +44,8 @@ function App() {
       setTeams(newTeams);
   }
   const loadPlayers = async () => {
-      const querySnapshot = await getDocs(colletionPlayers);
+    const q = query(collection(db,'players'));
+    onSnapshot(q, (querySnapshot) => {
       const newPlayers: Array<IPlayer> = querySnapshot.docs.map((item) => {
         const { firstName, lastName, jerseyNumber, teamId, goals } = item.data();
         return {
@@ -51,12 +58,16 @@ function App() {
         };
       });
       setPlayers(newPlayers);
+    });
+
   }
   const loadGames = async () => {
-    const querySnapshot = await getDocs(colletionGames);
-    console.log('games')
-    console.log(querySnapshot.docs);
-    setGames(querySnapshot.docs);
+    // const querySnapshot = await getDocs(colletionGames);
+    // setGames(querySnapshot.docs);
+    const q = query(collection(db, 'games'));
+    onSnapshot(q, (querySnapshot) => {
+      setGames(querySnapshot.docs);
+    });
   }
 
   useEffect(() => {
@@ -88,34 +99,9 @@ function App() {
             <Route path='players' element={<PlayersPage />}></Route>
             <Route path='add-player' element={<AddPlayerPage />}></Route>
             <Route path='add-game' element={<AddGamePage />}></Route>
+            <Route path='games/edit/:gameId' element={<EditGamePage />}></Route>
             <Route path='/' element={<HomePage />}></Route>
           </Routes>
-          {/* {games
-            .filter((g: DocumentData) => {
-              return g.id === '4eqTwl4a1vRcKqNgcfzd';
-            })
-            .map((g: DocumentData) => {
-              return <h2>{g.data().date}</h2>;
-            })}
-          {currentGame && (
-            <GameRecorder
-              teams={teams}
-              players={players}
-              gameData={getGameData()}
-              id={currentGame.id}
-            />
-          )}
-          {!currentGame && (
-            <button
-              onClick={() => {
-                const docRef = doc(colletionGames);
-                console.log(docRef);
-                setCurrentGame(docRef);
-              }}
-            >
-              Add New Game
-            </button>
-          )} */}
         </div>
       </div>
     </StateContext.Provider>

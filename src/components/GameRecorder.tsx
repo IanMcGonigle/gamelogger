@@ -1,7 +1,7 @@
-import React, { useState, useReducer} from 'react';
+import React, { useReducer} from 'react';
 import { format } from 'date-fns';
 import { setDoc,doc } from 'firebase/firestore';
-import { IPlayer, ITeam, GameRecorderProps, IGoal } from '../types';
+import { ITeam, GameRecorderProps, IGoal } from '../types';
 import { db } from '../database/firebase';
 import TeamGameSheet from './TeamGameSheet';
 import {
@@ -44,10 +44,7 @@ export default function GameRecorder (props: GameRecorderProps) {
           <input
             type='date'
             onChange={(e: React.FormEvent) => {
-              console.log({ e });
-              console.log((e.target as HTMLInputElement).value);
               const dateInput: string = (e.target as HTMLInputElement).value;
-              // setMatchDate(dateInput);
               dispatch({
                 type: GameRecorderActions.setMatchDate,
                 payload: dateInput,
@@ -66,10 +63,8 @@ export default function GameRecorder (props: GameRecorderProps) {
           label='Home'
           onGoal={(g: IGoal) => {
             dispatch({type: GameRecorderActions.setHomeGoals, payload:g})
-            // setHomeGoals([...homeGoals, g]);
           }}
           onTeamSelect={(t: ITeam) => {
-            // setHomeTeam(t);
             dispatch({ type: GameRecorderActions.setHomeTeam, payload: t });
           }}
         />
@@ -81,11 +76,9 @@ export default function GameRecorder (props: GameRecorderProps) {
           players={players}
           label='Away'
           onGoal={(g: IGoal) => {
-            // setAwayGoals([...awayGoals, g]);
             dispatch({ type: GameRecorderActions.setAwayGoals, payload: g });
           }}
           onTeamSelect={(t: ITeam) => {
-            // setAwayTeam(t);
             dispatch({ type: GameRecorderActions.setAwayTeam, payload: t });
           }}
         />

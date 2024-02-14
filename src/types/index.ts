@@ -7,7 +7,7 @@ export interface IAction {
 }
 
 export interface IPlayer {
-  id?: number | string;
+  id: string;
   firstName: string;
   lastName: string;
   jerseyNumber: string;
@@ -16,7 +16,7 @@ export interface IPlayer {
 };
 
 export interface IGame {
-  id: number;
+  id: string;
   date: string;
   home: ITeam;
   away: ITeam;
