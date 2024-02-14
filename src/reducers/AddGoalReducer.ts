@@ -5,7 +5,6 @@ export type AddGoalState = {
   addingNewPlayer: boolean;
   time: string;
   goalScorer: IPlayer | null;
-  teamMates: IPlayer[];
   ownGoal: boolean;
   playerSelectValue: string;
   penaltyKick: boolean;
@@ -16,7 +15,6 @@ export const initialState: AddGoalState = {
   addingNewPlayer: false,
   time: '',
   goalScorer: null,
-  teamMates: [],
   ownGoal: false,
   playerSelectValue: '-1',
   penaltyKick: false,
@@ -51,7 +49,6 @@ export function AddGoalReducer(state:AddGoalState = initialState, action:IAction
       return {
         ...state,
         ownGoal: payload.checked,
-        teamMates: payload.teamMates,
         goalScorer: payload.goalScorer ? null : state.goalScorer,
       };
 
@@ -59,10 +56,8 @@ export function AddGoalReducer(state:AddGoalState = initialState, action:IAction
       return { ...state, addingNewPlayer: payload, playerSelectValue: '-1' };
 
     case AddGoalActions.addNewGoalScorer:
-      const { teamMates } = state;
       return {
         ...state,
-        teamMates: [...teamMates, payload.goalScorer],
         addingNewPlayer: false,
         goalScorer: payload.goalScorer,
         playerSelectValue: payload.playerSelectValue,
@@ -80,7 +75,7 @@ export function AddGoalReducer(state:AddGoalState = initialState, action:IAction
       };
 
     case AddGoalActions.reset:
-      return { ...initialState, teamMates: state.teamMates };
+      return { ...initialState };
 
     default:
       return state;

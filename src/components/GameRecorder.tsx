@@ -1,8 +1,9 @@
-import React, { useReducer} from 'react';
+import React, { useReducer, useEffect} from 'react';
 import { format } from 'date-fns';
 import { setDoc,doc } from 'firebase/firestore';
 import { ITeam, GameRecorderProps, IGoal } from '../types';
 import { db } from '../database/firebase';
+import {  updateGame as update } from '../database/dataActions';
 import TeamGameSheet from './TeamGameSheet';
 import {
   GameState,
@@ -15,25 +16,24 @@ import {
 export default function GameRecorder (props: GameRecorderProps) {
   const { teams, players, gameData, id } = props;
   const [state, dispatch] = useReducer(GameRecorderReducer, gameData);
-  const { date:matchDate, home:homeTeam, away:awayTeam, homeGoals, awayGoals } = state;
+  const { date:matchDate, home:homeTeam, away:awayTeam, homeGoals, awayGoals, draw, winner, loser } = state;
+
   const getData = ():GameState => {
     return {
       date: matchDate,
       home: homeTeam,
       away: awayTeam,
       homeGoals,
-      awayGoals
+      awayGoals,
+      winner,
+      loser,
+      draw
     };
   }
   const updateGame = async () => {
-    try{
-      const newData = getData();
-      const docRef = doc(db, 'games', id);
-      await setDoc(docRef, newData);
-      dispatch({ type: GameRecorderActions.updateGame, payload: newData });
-    } catch(error){
-      console.log(error);
-    }
+    const data = getData();
+    await update(id, data);
+    dispatch({ type: GameRecorderActions.updateGame, payload: data });
   };
 
   return (

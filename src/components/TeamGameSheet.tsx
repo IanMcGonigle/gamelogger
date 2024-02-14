@@ -23,27 +23,31 @@ const TeamGameSheet = (props: TeamGameSheetProps) => {
           <h2>
             {us.name} : {goals.length}
           </h2>
-          {goals && goals.length > 0 && (
-            <ul>
-              {goals.map((g: IGoal, i:number) => {
-                return (
-                  <li key={`${i}_${g.player.firstName}`}>
-                    {g.player.firstName} {g.player.lastName}
-                  </li>
-                );
-              })}
-            </ul>
-          )}
           <AddGoal
             team={us}
             opponent={them}
             players={players}
             onComplete={(g: IGoal) => {
-              // onGoal([...goals, g]);
               onGoal(g);
             }}
             onCancel={() => {}}
           />
+          {goals && goals.length > 0 && (
+            <ul>
+              {goals.map((g: IGoal, i: number) => {
+                return (
+                  <li
+                    key={`${i}_${g.player.firstName}`}
+                    className={`goal-scored${g.ownGoal? ' goal-scored--own': ''}`}
+                  >
+                    {g.player.firstName} {g.player.lastName}
+                    {g.ownGoal ? `(OG)` : ``}
+                    {g.penaltyKick ? `(P)` : ``}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </>
       ) : (
         <>

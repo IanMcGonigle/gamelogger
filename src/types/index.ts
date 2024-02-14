@@ -22,6 +22,9 @@ export interface IGame {
   away: ITeam;
   homeGoals: Array<IGoal>;
   awayGoals: Array<IGoal>;
+  winner?: ITeam | null;
+  loser?: ITeam | null;
+  draw?: boolean;
 }
 
 export interface IGoal {
@@ -33,12 +36,41 @@ export interface IGoal {
 }
 
 export interface ITeam {
-  id: number|string,
+  id: string,
   name: string,
-  wins?:number,
-  losses?:number,
-  draws?:number,
+  matches?:Array<IGame>
 };
+
+export class Team implements ITeam {
+  id:string;
+  name:string;
+  matches: IGame[] ;
+  constructor( data:ITeam ){
+    this.id = data.id;
+    this.name = data.name;
+    this.matches = data.matches || [];
+  }
+  getWins() {
+    return this.matches.filter( (g:IGame) => {
+      return g.winner?.id === this.id;
+    });
+  }
+  getLosses(){
+    return this.matches.filter((g: IGame) => {
+      return g.loser?.id === this.id;
+    });
+  }
+  getDraws(){
+    return this.matches.filter((g: IGame) => {
+      return g.draw === true;
+    });
+  }
+  getPoints(){
+    const wins = this.getWins().length;
+    const draws = this.getDraws().length;
+    return (wins * 3 ) + draws;
+  }
+}
 
 export type AddPlayerProps = {
   teams: Array<ITeam>;

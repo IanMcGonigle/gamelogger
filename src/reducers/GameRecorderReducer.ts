@@ -6,6 +6,9 @@ export type GameState = {
   homeGoals: Array<IGoal>;
   awayGoals: Array<IGoal>;
   date: string;
+  winner?: ITeam | null;
+  loser?: ITeam | null;
+  draw?: boolean;
 };
 
 export const InitialGameState: GameState = {
@@ -14,6 +17,7 @@ export const InitialGameState: GameState = {
   homeGoals: [],
   awayGoals: [],
   date: '',
+  draw: true
 };
 
 export enum GameRecorderActions {
@@ -30,6 +34,7 @@ export function GameRecorderReducer(
   action: IAction
 ): GameState {
   const { type, payload } = action;
+  let winner, loser, isDraw,  arr;
   switch (type) {
     case GameRecorderActions.setHomeTeam:
       return { ...state, home: payload };
@@ -38,9 +43,21 @@ export function GameRecorderReducer(
     case GameRecorderActions.setMatchDate:
       return { ...state, date: payload };
     case GameRecorderActions.setHomeGoals:
-      return { ...state, homeGoals: [...state.homeGoals, payload] };
+      const newHomeGoals = [...state.homeGoals, payload];
+      arr = [{team:state.home, goals: newHomeGoals.length},{team:state.away, goals: state.awayGoals.length}]
+      arr.sort( (t1, t2) => t2.goals - t1.goals);
+      isDraw = newHomeGoals.length === state.awayGoals.length;
+      winner = isDraw ? null : arr[0].team;
+      loser = isDraw ? null : arr[1].team;
+      return { ...state, draw: isDraw, homeGoals: newHomeGoals, winner, loser };
     case GameRecorderActions.setAwayGoals:
-      return { ...state, awayGoals: [...state.awayGoals, payload] };
+      const newAwayGoals = [...state.awayGoals, payload];
+      arr = [{ team: state.home, goals: state.homeGoals.length },{ team: state.away, goals: newAwayGoals.length }];
+      arr.sort((t1, t2) => t2.goals - t1.goals);
+      isDraw = newAwayGoals.length === state.homeGoals.length;
+      winner = isDraw ? null : arr[0].team;
+      loser = isDraw ? null : arr[1].team;
+      return { ...state, awayGoals: newAwayGoals, draw: isDraw, winner, loser };
     case GameRecorderActions.updateGame:
       return { ...state, ...payload };
     default:

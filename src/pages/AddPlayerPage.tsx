@@ -4,7 +4,7 @@ import AddPlayer from '../components/AddPlayer';
 import { IPlayer } from '../types'
 
 export default function AddPlayerPage() {
-  const { teams, players } = useContext(StateContext);
+  const { teams } = useContext(StateContext);
   return (
     <div className='AddPlayerPage'>
       <h1>Add a player</h1>

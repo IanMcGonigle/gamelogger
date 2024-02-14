@@ -25,22 +25,10 @@ export default function GamesPage() {
   return (
     <div className='GamesPage'>
       <h1>Games</h1>
-      {currentGame && (
-        <GameRecorder
-          teams={teams}
-          players={players}
-          gameData={gameState}
-          id={currentGame.id}
-        />
-      )}
       {!currentGame && games.length > 0 && (
         <>
           <button
-            onClick={() => {
-              const docRef = doc(colletionGames);
-              console.log(docRef);
-              setCurrentGame(docRef);
-            }}
+            onClick={() => { window.location.href = '/add-game'}}
           >
             Add New Game
           </button>
@@ -52,7 +40,6 @@ export default function GamesPage() {
               <td>&nbsp;</td>
             </tr>
             {games.map((g: DocumentData) => {
-              console.log(g.data());
               const { date, home, away, homeGoals, awayGoals } = g.data();
               return (
                 <tr>

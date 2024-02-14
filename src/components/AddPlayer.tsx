@@ -1,7 +1,6 @@
-import React, { useState }from 'react';
-import { doc, setDoc } from 'firebase/firestore';
-import { colletionPlayers } from '../database/firebase';
-import { AddPlayerProps } from '../types';
+import { useState } from 'react';
+import { addNewPlayer } from '../database/dataActions';
+import { AddPlayerProps, IPlayer } from '../types';
 
 function AddPlayer(props: AddPlayerProps) {
   const { teams, onComplete, onCancel } = props;
@@ -77,14 +76,9 @@ function AddPlayer(props: AddPlayerProps) {
       <div className='inputRow'>
         <button
           onClick={ async () => {
-            const docRef = doc(colletionPlayers);
-            const playerData = getData();
-            try {
-                await setDoc(docRef, playerData);
-                onComplete( {...playerData, id:docRef.id});
-            } catch (error) {
-                console.error(error);
-            }
+            const playerData = getData() as IPlayer;
+            const playerId = await addNewPlayer(playerData)
+            onComplete({ ...playerData, id: playerId });
             reset();
           }}
         >

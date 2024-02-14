@@ -14,6 +14,9 @@ export default function MainNavigation() {
             <Link to='/games'>Games</Link>
           </li>
           <li>
+            <Link to='/teams'>Teams</Link>
+          </li>
+          <li>
             <Link to='/players'>Players</Link>
           </li>
           <li>

@@ -15,20 +15,17 @@ export interface AddGoalProps {
 
 export default function AddGoal (props: AddGoalProps) {
   const { players, team, onComplete, opponent} = props;
-  const firstState: AddGoalState = {
-    ...initialState,
-    teamMates: players.filter((p: IPlayer) => p.teamId === team.id),
-  };
+  const firstState: AddGoalState = { ...initialState };
   const [state, dispatch] = useReducer(AddGoalReducer, firstState);
 
-  const { addingGoal, addingNewPlayer, teamMates, playerSelectValue, time, penaltyKick, ownGoal, goalScorer } = state;
+  const { addingGoal, addingNewPlayer, playerSelectValue, time, penaltyKick, ownGoal, goalScorer } = state;
 
   const playerString = (player:IPlayer):string => {
     return `${player.jerseyNumber} ${player.firstName} ${player.lastName}`;
   }
 
   const playerByName = (name:string):IPlayer|void => {
-    return teamMates.find((p: IPlayer) => playerString(p) === name);
+    return players.find((p: IPlayer) => playerString(p) === name);
   }
 
   return (
@@ -62,7 +59,13 @@ export default function AddGoal (props: AddGoalProps) {
         >
           <option value='-1'>Select goal scorer</option>
           <option value='addNewPlayer'>Add player</option>
-          {teamMates.map((p: IPlayer) => {
+          {players.filter( (p:IPlayer) => {
+            if(ownGoal){
+              return p.teamId === opponent?.id
+            }else{
+              return p.teamId === team?.id;
+            }
+          }).map((p: IPlayer) => {
             return (
               <option key={p.firstName} value={playerString(p)}>
                 #{p.jerseyNumber} {p.firstName} {p.lastName}
@@ -129,8 +132,7 @@ export default function AddGoal (props: AddGoalProps) {
               dispatch({
                 type: AddGoalActions.ownGoal,
                 payload: {
-                  checked:e.target.checked,
-                  teamMates: players.filter((p: IPlayer) => p.teamId === opponent?.id)
+                  checked:e.target.checked
                 }
               });
             }}
@@ -139,8 +141,9 @@ export default function AddGoal (props: AddGoalProps) {
             disabled={!(goalScorer && time)}
             onClick={ async () => {
               const playerDocRef = doc(db, 'players', goalScorer.id);
-              await updateDoc(playerDocRef, { goals: increment(1) });
-              onComplete({ team, player: goalScorer, time });
+              const add:number = ownGoal ? 0 : 1
+              await updateDoc(playerDocRef, {goals: increment(add)});
+              onComplete({ team, player: goalScorer, time, ownGoal, penaltyKick });
               dispatch({ type: AddGoalActions.reset });
             }}
           >
