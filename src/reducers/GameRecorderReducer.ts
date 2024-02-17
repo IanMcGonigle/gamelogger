@@ -1,4 +1,4 @@
-import { ITeam, IGoal, IAction } from '../types';
+import { ITeam, IGoal, IAction, Team } from '../types';
 
 export type GameState = {
   home: ITeam | undefined;

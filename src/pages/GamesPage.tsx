@@ -28,28 +28,36 @@ export default function GamesPage() {
       {!currentGame && games.length > 0 && (
         <>
           <button
-            onClick={() => { window.location.href = '/add-game'}}
+            onClick={() => {
+              window.location.href = '/add-game';
+            }}
           >
             Add New Game
           </button>
           <table>
-            <tr>
-              <td>Date</td>
-              <td>Home</td>
-              <td>Away</td>
-              <td>&nbsp;</td>
-            </tr>
-            {games.map((g: DocumentData) => {
-              const { date, home, away, homeGoals, awayGoals } = g.data();
-              return (
-                <tr>
-                  <td>{date}</td>
-                  <td>{`${home?.name}: ${homeGoals?.length}`}</td>
-                  <td>{`${away?.name}: ${awayGoals?.length}`}</td>
-                  <td><Link to={`edit/${g.id}`}>Edit</Link></td>
-                </tr>
-              );
-            })}
+            <thead>
+              <tr>
+                <td>Date</td>
+                <td>Home</td>
+                <td>Away</td>
+                <td>&nbsp;</td>
+              </tr>
+            </thead>
+            <tbody>
+              {games.map((g: DocumentData) => {
+                const { date, home, away, homeGoals, awayGoals } = g.data();
+                return (
+                  <tr key={g.id}>
+                    <td>{date}</td>
+                    <td>{`${home?.name}: ${homeGoals?.length}`}</td>
+                    <td>{`${away?.name}: ${awayGoals?.length}`}</td>
+                    <td>
+                      <Link to={`edit/${g.id}`}>Edit</Link>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
           </table>
         </>
       )}

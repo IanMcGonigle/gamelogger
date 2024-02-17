@@ -1,4 +1,3 @@
-import { DocumentData } from 'firebase/firestore';
 import { GameState } from '../reducers/GameRecorderReducer';
 
 export interface IAction {
@@ -18,8 +17,8 @@ export interface IPlayer {
 export interface IGame {
   id: string;
   date: string;
-  home: ITeam;
-  away: ITeam;
+  home: ITeam | Team;
+  away: ITeam | Team;
   homeGoals: Array<IGoal>;
   awayGoals: Array<IGoal>;
   winner?: ITeam | null;
@@ -38,37 +37,47 @@ export interface IGoal {
 export interface ITeam {
   id: string,
   name: string,
-  matches?:Array<IGame>
+  badge?: string,
+  matches:Array<IGame>,
 };
 
 export class Team implements ITeam {
-  id:string;
-  name:string;
-  matches: IGame[] ;
-  constructor( data:ITeam ){
+  id: string;
+  name: string;
+  matches: IGame[];
+  badge:string;
+  constructor(data: ITeam) {
     this.id = data.id;
     this.name = data.name;
+    this.badge = data.badge || '';
     this.matches = data.matches || [];
   }
   getWins() {
-    return this.matches.filter( (g:IGame) => {
+    return this.matches.filter((g: IGame) => {
       return g.winner?.id === this.id;
     });
   }
-  getLosses(){
+  getLosses() {
     return this.matches.filter((g: IGame) => {
       return g.loser?.id === this.id;
     });
   }
-  getDraws(){
+  getDraws() {
     return this.matches.filter((g: IGame) => {
       return g.draw === true;
     });
   }
-  getPoints(){
+  getPoints() {
     const wins = this.getWins().length;
     const draws = this.getDraws().length;
-    return (wins * 3 ) + draws;
+    return wins * 3 + draws;
+  }
+  getData() {
+    return {
+      id: this.id,
+      name: this.name,
+      matches: this.matches,
+    };
   }
 }
 

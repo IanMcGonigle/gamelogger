@@ -1,7 +1,7 @@
 import React, { useReducer, useEffect} from 'react';
 import { format } from 'date-fns';
 import { setDoc,doc } from 'firebase/firestore';
-import { ITeam, GameRecorderProps, IGoal } from '../types';
+import { ITeam, GameRecorderProps, IGoal, Team } from '../types';
 import { db } from '../database/firebase';
 import {  updateGame as update } from '../database/dataActions';
 import TeamGameSheet from './TeamGameSheet';
@@ -19,6 +19,7 @@ export default function GameRecorder (props: GameRecorderProps) {
   const { date:matchDate, home:homeTeam, away:awayTeam, homeGoals, awayGoals, draw, winner, loser } = state;
 
   const getData = ():GameState => {
+
     return {
       date: matchDate,
       home: homeTeam,
@@ -27,7 +28,7 @@ export default function GameRecorder (props: GameRecorderProps) {
       awayGoals,
       winner,
       loser,
-      draw
+      draw,
     };
   }
   const updateGame = async () => {

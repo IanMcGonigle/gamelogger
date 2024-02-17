@@ -2,7 +2,7 @@ import React, { useState, useEffect} from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { IPlayer, ITeam, Team } from './types';
 import { InitialGameState } from './reducers/GameRecorderReducer';
-import './App.css';
+import './App.scss';
 import { StateContext } from './context/StateContext';
 import { colletionTeams, db } from './database/firebase';
 import {
@@ -11,6 +11,8 @@ import {
   collection,
   query,
   DocumentData,
+  updateDoc,
+  doc
 } from 'firebase/firestore';
 import MainNavigation from './components/MainNavigation';
 import GamesPage from './pages/GamesPage';
@@ -20,6 +22,9 @@ import AddPlayerPage from './pages/AddPlayerPage';
 import HomePage from './pages/HomePage';
 import AddGamePage from './pages/AddGamePage';
 import EditGamePage from './pages/EditGamePage';
+import TeamPage from './pages/TeamPage';
+
+import { badges } from './dummyPlayers';
 
 
 function App() {
@@ -29,17 +34,11 @@ function App() {
   const [games, setGames] = useState<DocumentData[]>([])
 
   const loadTeams = async () => {
-      // const querySnapshot = await getDocs(colletionTeams);
-      // const newTeams: Array<ITeam> = querySnapshot.docs.map((item) => {
-      //   return { id: item.id, name: item.data().name } as ITeam;
-      // });
-
       const q = query(collection(db, 'teams'));
       onSnapshot(q, (querySnapshot) => {
-        const newTeams: Array<ITeam> = querySnapshot.docs.map((item) => {
-          const { name, matches = [] } = item.data() as ITeam
-          return new Team({id:item.id, name, matches});
-          // return { id: item.id, name: item.data().name } as ITeam;
+        const newTeams: Array<ITeam> = querySnapshot.docs.filter( item => Boolean(item.data()?.name)).map((item) => {
+          const { name, badge, matches = [] } = item.data() as ITeam;
+            return { id: item.id, name, matches, badge } as ITeam;
         });
         setTeams(newTeams);
       });
@@ -61,11 +60,11 @@ function App() {
       });
       setPlayers(newPlayers);
     });
-
   }
   const loadGames = async () => {
     const q = query(collection(db, 'games'));
     onSnapshot(q, (querySnapshot) => {
+      console.log('set games')
       setGames(querySnapshot.docs);
     });
   }
@@ -81,18 +80,17 @@ function App() {
       value={{ games, teams, players, gameState: InitialGameState }}
     >
       <div className='App'>
-        <div className='App-header'>
-          <MainNavigation />
-          <Routes>
-            <Route path='games' element={<GamesPage />}></Route>
-            <Route path='teams' element={<TeamsPage />}></Route>
-            <Route path='players' element={<PlayersPage />}></Route>
-            <Route path='add-player' element={<AddPlayerPage />}></Route>
-            <Route path='add-game' element={<AddGamePage />}></Route>
-            <Route path='games/edit/:gameId' element={<EditGamePage />}></Route>
-            <Route path='/' element={<HomePage />}></Route>
-          </Routes>
-        </div>
+        <MainNavigation />
+        <Routes>
+          <Route path='games' element={<GamesPage />}></Route>
+          <Route path='teams' element={<TeamsPage />}></Route>
+          <Route path='players' element={<PlayersPage />}></Route>
+          <Route path='add-player' element={<AddPlayerPage />}></Route>
+          <Route path='add-game' element={<AddGamePage />}></Route>
+          <Route path='games/edit/:gameId' element={<EditGamePage />}></Route>
+          <Route path='teams/:teamId' element={<TeamPage />}></Route>
+          <Route path='/' element={<HomePage />}></Route>
+        </Routes>
       </div>
     </StateContext.Provider>
   );

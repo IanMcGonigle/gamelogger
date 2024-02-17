@@ -91,6 +91,109 @@ const lfc = [
   '#19 Harvey Elliot',
 ];
 
+export const badges = [
+  {
+    badge:
+      'https://resources.premierleague.com/premierleague/badges/100/t3@x2.png',
+    name: 'Arsenal',
+  },
+  {
+    badge:
+      'https://resources.premierleague.com/premierleague/badges/100/t7@x2.png',
+    name: 'Aston Villa',
+  },
+  {
+    badge:
+      'https://resources.premierleague.com/premierleague/badges/100/t91@x2.png',
+    name: 'AFC Bournemouth',
+  },
+  {
+    badge:
+      'https://resources.premierleague.com/premierleague/badges/100/t94@x2.png',
+    name: 'Brentford',
+  },
+  {
+    badge:
+      'https://resources.premierleague.com/premierleague/badges/100/t36@x2.png',
+    name: 'Brighton & Hove Albion',
+  },
+  {
+    badge:
+      'https://resources.premierleague.com/premierleague/badges/100/t90@x2.png',
+    name: 'Burnley',
+  },
+  {
+    badge:
+      'https://resources.premierleague.com/premierleague/badges/100/t8@x2.png',
+    name: 'Chelsea',
+  },
+  {
+    badge:
+      'https://resources.premierleague.com/premierleague/badges/100/t31@x2.png',
+    name: 'Crystal Palace',
+  },
+  {
+    badge:
+      'https://resources.premierleague.com/premierleague/badges/100/t11@x2.png',
+    name: 'Everton ',
+  },
+  {
+    badge:
+      'https://resources.premierleague.com/premierleague/badges/100/t54@x2.png',
+    name: 'Fulham',
+  },
+  {
+    badge:
+      'https://resources.premierleague.com/premierleague/badges/100/t14@x2.png',
+    name: 'Liverpool',
+  },
+  {
+    badge:
+      'https://resources.premierleague.com/premierleague/badges/100/t102@x2.png',
+    name: 'Luton Town',
+  },
+  {
+    badge:
+      'https://resources.premierleague.com/premierleague/badges/100/t43@x2.png',
+    name: 'Manchester City',
+  },
+  {
+    badge:
+      'https://resources.premierleague.com/premierleague/badges/100/t1@x2.png',
+    name: 'Manchester United',
+  },
+  {
+    badge:
+      'https://resources.premierleague.com/premierleague/badges/100/t4@x2.png',
+    name: 'Newcastle United',
+  },
+  {
+    badge:
+      'https://resources.premierleague.com/premierleague/badges/100/t17@x2.png',
+    name: 'Nottingham Forest',
+  },
+  {
+    badge:
+      'https://resources.premierleague.com/premierleague/badges/100/t49@x2.png',
+    name: 'Sheffield United',
+  },
+  {
+    badge:
+      'https://resources.premierleague.com/premierleague/badges/100/t6@x2.png',
+    name: 'Tottenham Hotspur',
+  },
+  {
+    badge:
+      'https://resources.premierleague.com/premierleague/badges/100/t21@x2.png',
+    name: 'West Ham United',
+  },
+  {
+    badge:
+      'https://resources.premierleague.com/premierleague/badges/100/t39@x2.png',
+    name: 'Wolverhampton Wanderers',
+  },
+];
+
 // const initializeTeams = async () => {
 //     teamlist.forEach(async (t) => {
 //     const docRef = doc(colletionTeams);

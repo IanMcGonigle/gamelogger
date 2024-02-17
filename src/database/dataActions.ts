@@ -4,13 +4,21 @@ import { GameState } from '../reducers/GameRecorderReducer';
 import { IGame, IPlayer, ITeam } from '../types';
 
 export const updateGame = async (id: string, gameData: GameState) => {
+  console.log('updateGame called ', gameData);
+
+  const { home, away } = gameData;
+  console.log( {home})
+
   try{
     const docRef = doc(db, 'games', id);
     await setDoc(docRef, gameData);
+    console.log('updateGame called set doc');
     await updateTeamStats(id, gameData.home as ITeam);
     await updateTeamStats(id, gameData.away as ITeam);
+    console.log('updateGame teams called');
     return docRef.id;
   }catch(error){
+    console.log('updateGame error ', error);
     return error;
   }
 };

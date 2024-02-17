@@ -1,9 +1,10 @@
 import React, { useContext } from 'react';
 import { StateContext } from '../context/StateContext';
-import { Team } from '../types';
+import { Team, ITeam } from '../types';
 
 export default function TeamsPage() {
-  const { teams } = useContext(StateContext);
+  const { teams:teamData } = useContext(StateContext);
+  const teams = teamData.map((t: ITeam) => new Team({...t}));
   teams.sort( (t1:Team, t2:Team) => t2.getPoints() - t1.getPoints() );
 
   return (
