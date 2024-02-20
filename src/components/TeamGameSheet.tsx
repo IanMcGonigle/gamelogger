@@ -21,7 +21,8 @@ const TeamGameSheet = (props: TeamGameSheetProps) => {
       {us !== undefined ? (
         <>
           <h2>
-            {us.name} : {goals.length}
+            <img src={us.badge} alt={us.name} />
+            {goals.length}
           </h2>
           <AddGoal
             team={us}
@@ -38,7 +39,9 @@ const TeamGameSheet = (props: TeamGameSheetProps) => {
                 return (
                   <li
                     key={`${i}_${g.player.firstName}`}
-                    className={`goal-scored${g.ownGoal? ' goal-scored--own': ''}`}
+                    className={`goal-scored${
+                      g.ownGoal ? ' goal-scored--own' : ''
+                    }`}
                   >
                     {g.player.firstName} {g.player.lastName}
                     {g.ownGoal ? `(OG)` : ``}

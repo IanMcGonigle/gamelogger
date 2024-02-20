@@ -12,10 +12,8 @@ export const updateGame = async (id: string, gameData: GameState) => {
   try{
     const docRef = doc(db, 'games', id);
     await setDoc(docRef, gameData);
-    console.log('updateGame called set doc');
     await updateTeamStats(id, gameData.home as ITeam);
     await updateTeamStats(id, gameData.away as ITeam);
-    console.log('updateGame teams called');
     return docRef.id;
   }catch(error){
     console.log('updateGame error ', error);
@@ -37,16 +35,14 @@ export const addNewPlayer = async ( playerData:IPlayer ) => {
 const updateTeamStats = async (gameId: string, team:ITeam) => {
   const teamRef = doc(db, 'teams', team.id);
   const teamSnap = await getDoc(teamRef);
-  const matches = teamSnap.data()?.matches || [];
-  const matchExists = matches.some((g: IGame) => g?.id === gameId);
-
-  if (matchExists) return;
-
+  const matches = teamSnap
+    .data()
+    ?.matches.filter((g: IGame) => g?.id !== gameId);
   const gameRef = doc(db, 'games', gameId);
   const docSnap = await getDoc(gameRef);
 
   await updateDoc(teamRef, {
-    matches: arrayUnion({ id:gameId, ...docSnap.data()}),
+    matches: [...matches, { id:gameId, ...docSnap.data()}],
   });
 
   return;

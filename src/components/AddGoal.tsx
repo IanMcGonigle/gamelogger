@@ -146,7 +146,7 @@ export default function AddGoal (props: AddGoalProps) {
           </div>
           <div className='inputRow'>
             <button
-              disabled={!(goalScorer && time)}
+              disabled={!(goalScorer)}
               onClick={async () => {
                 const playerDocRef = doc(db, 'players', goalScorer.id);
                 const add: number = ownGoal ? 0 : 1;

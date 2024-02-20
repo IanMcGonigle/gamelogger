@@ -46,6 +46,7 @@ export class Team implements ITeam {
   name: string;
   matches: IGame[];
   badge:string;
+  // teams: ITeam[];
   constructor(data: ITeam) {
     this.id = data.id;
     this.name = data.name;

@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect} from 'react';
+import React, { useCallback, useEffect, useReducer, useState} from 'react';
 import { format } from 'date-fns';
 import { setDoc,doc } from 'firebase/firestore';
 import { ITeam, GameRecorderProps, IGoal, Team } from '../types';
@@ -18,8 +18,7 @@ export default function GameRecorder (props: GameRecorderProps) {
   const [state, dispatch] = useReducer(GameRecorderReducer, gameData);
   const { date:matchDate, home:homeTeam, away:awayTeam, homeGoals, awayGoals, draw, winner, loser } = state;
 
-  const getData = ():GameState => {
-
+  const getData = useCallback(() => {
     return {
       date: matchDate,
       home: homeTeam,
@@ -30,19 +29,34 @@ export default function GameRecorder (props: GameRecorderProps) {
       loser,
       draw,
     };
-  }
-  const updateGame = async () => {
+  }, [matchDate,homeTeam,awayTeam,homeGoals,awayGoals,draw,winner,loser]);
+
+  const updateGame = useCallback( async ()=> {
     const data = getData();
     await update(id, data);
     dispatch({ type: GameRecorderActions.updateGame, payload: data });
-  };
+  },[getData, id])
+
+  useEffect(() => {
+    updateGame();
+  }, [updateGame, homeGoals, awayGoals]);
 
   return (
     <div className='GameRecorder'>
-      <div className='inputRow'>
-        {matchDate && <h3 onDoubleClick={ () => {
-          dispatch({ type: GameRecorderActions.setMatchDate, payload: null});
-        }}>{format(new Date(matchDate.split('-').join('/')), 'PPPP')}</h3>}
+      <div className='inputRow inputRow--centered'>
+        {matchDate && (
+          <h3
+            className='gameDate'
+            onDoubleClick={() => {
+              dispatch({
+                type: GameRecorderActions.setMatchDate,
+                payload: null,
+              });
+            }}
+          >
+            {format(new Date(matchDate.split('-').join('/')), 'PPPP')}
+          </h3>
+        )}
         {!matchDate && (
           <input
             type='date'
@@ -66,11 +80,13 @@ export default function GameRecorder (props: GameRecorderProps) {
           label='Home'
           onGoal={(g: IGoal) => {
             dispatch({ type: GameRecorderActions.setHomeGoals, payload: g });
+            console.log('homegoals ', homeGoals.length);
           }}
           onTeamSelect={(t: ITeam) => {
             dispatch({ type: GameRecorderActions.setHomeTeam, payload: t });
           }}
         />
+        <span className='versus'>VS</span>
         <TeamGameSheet
           us={awayTeam}
           them={homeTeam}
@@ -86,7 +102,7 @@ export default function GameRecorder (props: GameRecorderProps) {
           }}
         />
       </div>
-      <button onClick={() => updateGame()}>Update Game</button>
+      {/* <button onClick={() => updateGame()}>Update Game</button> */}
     </div>
   );
 }

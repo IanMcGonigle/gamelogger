@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
 import { StateContext } from '../context/StateContext';
 import { Team, ITeam } from '../types';
 
@@ -12,11 +13,14 @@ export default function TeamsPage() {
       <h1>Teams</h1>
       <table>
         <thead>
-          <td>Name</td>
-          <td>Wins</td>
-          <td>Losses</td>
-          <td>Draws</td>
-          <td>Points</td>
+          <tr>
+            <th>Name</th>
+            <th>Matches</th>
+            <th>Wins</th>
+            <th>Losses</th>
+            <th>Draws</th>
+            <th>Points</th>
+          </tr>
         </thead>
         <tbody>
           {teams.map((t: Team) => {
@@ -25,11 +29,17 @@ export default function TeamsPage() {
             const draws = t.getDraws().length;
             return (
               <tr>
-                <td>{t.name}</td>
+                <td>
+                  <Link to={`/teams/${t.id}`}>
+                    <img src={t.badge} alt={t.name} width='50px' />
+                    {t.name}
+                  </Link>
+                </td>
+                <td>{t.matches.length}</td>
                 <td>{wins}</td>
                 <td>{loss}</td>
                 <td>{draws}</td>
-                <td>{(wins*3) + (draws)}</td>
+                <td>{wins * 3 + draws}</td>
               </tr>
             );
           })}

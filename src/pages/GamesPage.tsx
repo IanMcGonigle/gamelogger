@@ -27,20 +27,21 @@ export default function GamesPage() {
       <h1>Games</h1>
       {!currentGame && games.length > 0 && (
         <>
-          <button
-            onClick={() => {
-              window.location.href = '/add-game';
-            }}
-          >
-            Add New Game
-          </button>
+            <button
+              onClick={() => {
+                window.location.href = '/add-game';
+              }}
+            >
+              Add New Game
+            </button>
+
           <table>
             <thead>
               <tr>
-                <td>Date</td>
-                <td>Home</td>
-                <td>Away</td>
-                <td>&nbsp;</td>
+                <th>Date</th>
+                <th>Home</th>
+                <th>Away</th>
+                <th>&nbsp;</th>
               </tr>
             </thead>
             <tbody>
@@ -52,7 +53,7 @@ export default function GamesPage() {
                     <td>{`${home?.name}: ${homeGoals?.length}`}</td>
                     <td>{`${away?.name}: ${awayGoals?.length}`}</td>
                     <td>
-                      <Link className="btn" to={`edit/${g.id}`}>Edit</Link>
+                      <Link to={`edit/${g.id}`}>Edit</Link>
                     </td>
                   </tr>
                 );

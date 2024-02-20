@@ -24,16 +24,16 @@ export default function PlayersPage() {
       <table>
         <thead>
           <tr>
-            <td>Rank</td>
-            <td>Player</td>
-            <td>Goals Scored</td>
-            <td>Team</td>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>Goals Scored</th>
+            <th>Team</th>
           </tr>
         </thead>
         <tbody>
           {players.sort(sortByGoalsScored).map((p: IPlayer, index: number) => {
             return (
-              <tr>
+              <tr key={p.id}>
                 <td>{index + 1}</td>
                 <td>{getFullName(p)}</td>
                 <td>{p.goals || 0}</td>
