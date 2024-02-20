@@ -5,7 +5,7 @@ import { ITeam } from '../types';
 export default function HomePage() {
   const { teams } = useContext(StateContext);
   return (
-    <div className='HomePage'>
+    <div className='HomePage page'>
       <h1>23/24 Teams</h1>
       <ul className='teamGrid'>
         { teams.sort( (t1:ITeam, t2:ITeam) => t1?.name < t2?.name).map( (t:ITeam) => {

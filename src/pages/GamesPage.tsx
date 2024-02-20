@@ -23,7 +23,7 @@ export default function GamesPage() {
   const [currentGame, setCurrentGame] = useState<DocumentData | undefined>();
   const { games, teams, players, gameState } = useContext(StateContext);
   return (
-    <div className='GamesPage'>
+    <div className='GamesPage page'>
       <h1>Games</h1>
       {!currentGame && games.length > 0 && (
         <>
@@ -52,7 +52,7 @@ export default function GamesPage() {
                     <td>{`${home?.name}: ${homeGoals?.length}`}</td>
                     <td>{`${away?.name}: ${awayGoals?.length}`}</td>
                     <td>
-                      <Link to={`edit/${g.id}`}>Edit</Link>
+                      <Link className="btn" to={`edit/${g.id}`}>Edit</Link>
                     </td>
                   </tr>
                 );

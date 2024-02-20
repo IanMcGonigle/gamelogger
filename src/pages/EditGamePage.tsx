@@ -22,7 +22,7 @@ export default function EditGamePage() {
     setCurrentGame(gameData);
   }, [games, gameId]);
   return (
-    <div className='AddGamePage'>
+    <div className='AddGamePage page'>
       <h1>Edit a Game</h1>
       {currentGame && (
         <GameRecorder

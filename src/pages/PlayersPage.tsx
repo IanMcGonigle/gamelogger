@@ -19,15 +19,17 @@ export default function PlayersPage() {
     return t ? t.name : '';
   }
   return (
-    <div className='PlayersPage'>
+    <div className='PlayersPage page'>
       <h1>Goal leaders</h1>
       <table>
-        <tr>
-          <td>Rank</td>
-          <td>Player</td>
-          <td>Goals Scored</td>
-          <td>Team</td>
-        </tr>
+        <thead>
+          <tr>
+            <td>Rank</td>
+            <td>Player</td>
+            <td>Goals Scored</td>
+            <td>Team</td>
+          </tr>
+        </thead>
         <tbody>
           {players.sort(sortByGoalsScored).map((p: IPlayer, index: number) => {
             return (

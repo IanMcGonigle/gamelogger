@@ -2,7 +2,7 @@
   box-sizing: border-box;
 }
 :root {
-  --epl-dark-purple:#37003c;
+  --epl-dark-purple:#37003c; // rgb(55, 0, 60)
   --epl-purple:#7367ff;
   --epl-light-purple:#963cff;
   --epl-teal:#05f0ff;
@@ -34,6 +34,11 @@ h1,h2, h3,h4,h5,h6 {
 table {
     border-collapse: collapse;
     margin: 0 auto;
+    width: 100%;
+}
+
+thead {
+  font-family: PremierSans-Heavy;
 }
 
 tr {
@@ -59,9 +64,122 @@ h1 {
   }
 }
 
+%reset {
+  background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+  appearance: none;
+  &:focus {
+    outline: 1px solid var(--epl-pink);
+    box-shadow:0px 0px 5px 0px var(--epl-pink);
+  }
+}
+
+label {
+  display: block;
+  font-family: PremierSans-Heavy;
+}
+
+select, input[type=text], input[type=date]{
+  font-family: PremierSans-Bold,Arial,Helvetica Neue,Helvetica,sans-serif;
+  @extend %reset;
+  width: 100%;
+  color: var(--epl-dark-purple);
+  background: white;
+  border: 1px solid var(--epl-dark-purple);
+  border-radius: 3px;
+  padding: .25rem 1rem;
+}
+
+input[type=checkbox] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+
+  &:focus + label {
+    outline: 1px solid var(--epl-pink);
+    box-shadow:0px 0px 5px 0px var(--epl-pink);
+  }
+  + label {
+    display: inline;
+    position: relative;
+    &::after {
+      content: '';
+      color: white;
+      display: block;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      right: -30px;
+      width: 20px;
+      height: 20px;
+      border: 1px solid var(--epl-dark-purple);
+      border-radius: 3px;
+    }
+  }
+  &:checked + label::after {
+    background-color: var(--epl-dark-purple)
+  }
+  &:checked + label::before {
+    content: "\00d7";
+    position: absolute;
+    color: white;
+    right: -25px;
+    top: -4px;
+    font-size: 1.5rem;
+    z-index: 1;
+  }
+}
+
+button, a.btn {
+  @extend %reset;
+  font-family: PremierSans-Heavy;
+  text-transform: uppercase;
+  padding: .75rem 1.25rem;
+  background-color: var(--epl-dark-purple);
+  color: white;
+  border-radius: 4px;
+  text-shadow: 1px 1px 0px var(--epl-light-purple);
+  text-decoration: none;
+
+  &:visited {
+    color: var(--epl-dark-purple);
+  }
+
+  &:hover:not(:disabled) {
+    background: var(--epl-teal);
+    text-shadow: 1px 1px 0px var(--epl-pink);
+    color: white;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.AddPlayer {
+  color:var(--epl-dark-purple);
+  background-color: white;
+
+  &__wrapper {
+    background-color: white;
+    padding: 2rem;
+    margin: 2rem;
+    border-radius: .25rem;
+    box-shadow: 0px 10px 15px rgb(55, 0, 60, 0.3);
+  }
+}
+
 .teamSheets {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  gap: 1rem;
 }
 
 .MainNavigation {
@@ -117,5 +235,35 @@ h1 {
       margin: auto;
       max-width: 100%;
     }
+  }
+
+}
+.page {
+  width: clamp(200px, 100%, 1000px);
+  margin: 0 auto;
+}
+
+.inputRow {
+  margin-bottom: 1rem;
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+
+  button:not(:last-of-type) {
+    margin-right: 1rem;
+  }
+}
+
+.checkboxRow {
+  margin-bottom: 1rem;
+}
+
+.AddGoal {
+  &--addingGoal {
+    padding: 1rem;
+    color: var(--epl-dark-purple);
+    background-color: white;
+    border-radius: .25rem;
+    box-shadow: 0px 10px 15px rgb(55, 0, 60, 0.3);
   }
 }

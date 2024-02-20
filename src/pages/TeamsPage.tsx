@@ -8,7 +8,7 @@ export default function TeamsPage() {
   teams.sort( (t1:Team, t2:Team) => t2.getPoints() - t1.getPoints() );
 
   return (
-    <div className='Teams'>
+    <div className='Teams page'>
       <h1>Teams</h1>
       <table>
         <thead>

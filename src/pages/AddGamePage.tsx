@@ -20,7 +20,7 @@ export default function AddGamePage() {
     setCurrentGame(docRef);
   }, [])
   return (
-    <div className='AddGamePage'>
+    <div className='AddGamePage page'>
       <h1>Add a Game</h1>
       {currentGame && (
         <GameRecorder

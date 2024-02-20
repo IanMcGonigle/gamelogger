@@ -29,7 +29,7 @@ export default function AddGoal (props: AddGoalProps) {
   }
 
   return (
-    <div className='AddGoal'>
+    <div className={`AddGoal${addingGoal ? ' AddGoal--addingGoal' : ''}`}>
       {!addingGoal && (
         <button
           onClick={() => {
@@ -40,46 +40,51 @@ export default function AddGoal (props: AddGoalProps) {
         </button>
       )}
       {addingGoal && !addingNewPlayer && (
-        <select
-          id='playerSelect'
-          value={playerSelectValue}
-          onChange={(e) => {
-            if (e.target.value === 'addNewPlayer') {
-              dispatch({ type: AddGoalActions.addNewPlayer, payload: true });
-            } else {
-              dispatch({
-                type: AddGoalActions.addGoalScorer,
-                payload: {
-                  goalScorer: playerByName(e.target.value),
-                  playerSelectValue: e.target.value,
-                },
-              });
-            }
-          }}
-        >
-          <option value='-1'>Select goal scorer</option>
-          <option value='addNewPlayer'>Add player</option>
-          {players.filter( (p:IPlayer) => {
-            if(ownGoal){
-              return p.teamId === opponent?.id
-            }else{
-              return p.teamId === team?.id;
-            }
-          }).map((p: IPlayer) => {
-            return (
-              <option key={p.firstName} value={playerString(p)}>
-                #{p.jerseyNumber} {p.firstName} {p.lastName}
-              </option>
-            );
-          })}
-        </select>
+        <div className='inputRow'>
+          <label htmlFor={`playerSelect_${team.id}`}>Goal Scorer</label>
+          <select
+            id={`playerSelect_${team.id}`}
+            value={playerSelectValue}
+            onChange={(e) => {
+              if (e.target.value === 'addNewPlayer') {
+                dispatch({ type: AddGoalActions.addNewPlayer, payload: true });
+              } else {
+                dispatch({
+                  type: AddGoalActions.addGoalScorer,
+                  payload: {
+                    goalScorer: playerByName(e.target.value),
+                    playerSelectValue: e.target.value,
+                  },
+                });
+              }
+            }}
+          >
+            <option value='-1'>Select goal scorer</option>
+            <option value='addNewPlayer'>Add player</option>
+            {players
+              .filter((p: IPlayer) => {
+                if (ownGoal) {
+                  return p.teamId === opponent?.id;
+                } else {
+                  return p.teamId === team?.id;
+                }
+              })
+              .map((p: IPlayer) => {
+                return (
+                  <option key={p.firstName} value={playerString(p)}>
+                    #{p.jerseyNumber} {p.firstName} {p.lastName}
+                  </option>
+                );
+              })}
+          </select>
+        </div>
       )}
       {addingGoal && addingNewPlayer && (
         <AddPlayer
           teams={[team]}
           onComplete={(p: IPlayer) => {
             const ps = playerString(p);
-            console.log(p)
+            console.log(p);
             dispatch({
               type: AddGoalActions.addNewGoalScorer,
               payload: {
@@ -93,62 +98,79 @@ export default function AddGoal (props: AddGoalProps) {
           }}
         />
       )}
-      {addingGoal && (
+      {addingGoal && !addingNewPlayer && (
         <>
-          <input
-            type='text'
-            pattern='[0-9\+ ]*'
-            placeholder='minute scored'
-            value={time}
-            onChange={(e) => {
-              dispatch({
-                type: AddGoalActions.setTime,
-                payload: e.target.value,
-              });
-            }}
-          />
-          <br></br>
-          <label htmlFor='penaltyKick'>Penalty Kick</label>
-          <input
-            type='checkbox'
-            name='penaltyKick'
-            id='penaltyKick'
-            checked={penaltyKick}
-            onChange={(e) => {
-              dispatch({
-                type: AddGoalActions.penaltyKick,
-                payload: e.target.checked,
-              });
-            }}
-          />
-          <br></br>
-          <label htmlFor='ownGoal'>Own Goal</label>
-          <input
-            type='checkbox'
-            name='ownGoal'
-            id='ownGoal'
-            checked={ownGoal}
-            onChange={(e) => {
-              dispatch({
-                type: AddGoalActions.ownGoal,
-                payload: {
-                  checked:e.target.checked
-                }
-              });
-            }}
-          />
-          <button
-            disabled={!(goalScorer && time)}
-            onClick={ async () => {
-              const playerDocRef = doc(db, 'players', goalScorer.id);
-              const add:number = ownGoal ? 0 : 1
-              await updateDoc(playerDocRef, {goals: increment(add)});
-              onComplete({ team, player: goalScorer, time, ownGoal, penaltyKick });
-              dispatch({ type: AddGoalActions.reset });
-            }}
-          >
-            save goal
-          </button>
+          <div className='inputRow'>
+            <label htmlFor=''>Minute Scored</label>
+            <input
+              type='text'
+              pattern='[0-9\+ ]*'
+              value={time}
+              onChange={(e) => {
+                dispatch({
+                  type: AddGoalActions.setTime,
+                  payload: e.target.value,
+                });
+              }}
+            />
+          </div>
+          <div className='checkboxRow'>
+            <input
+              type='checkbox'
+              id={`penaltyKick_${team.id}`}
+              checked={penaltyKick}
+              onChange={(e) => {
+                dispatch({
+                  type: AddGoalActions.penaltyKick,
+                  payload: e.target.checked,
+                });
+              }}
+            />
+            <label htmlFor={`penaltyKick_${team.id}`}>Penalty Kick</label>
+          </div>
+          <div className='checkboxRow'>
+            <input
+              type='checkbox'
+              id={`ownGoal_${team.id}`}
+              checked={ownGoal}
+              onChange={(e) => {
+                dispatch({
+                  type: AddGoalActions.ownGoal,
+                  payload: {
+                    checked: e.target.checked,
+                  },
+                });
+              }}
+            />
+            <label htmlFor={`ownGoal_${team.id}`}>Own Goal</label>
+          </div>
+          <div className='inputRow'>
+            <button
+              disabled={!(goalScorer && time)}
+              onClick={async () => {
+                const playerDocRef = doc(db, 'players', goalScorer.id);
+                const add: number = ownGoal ? 0 : 1;
+                await updateDoc(playerDocRef, { goals: increment(add) });
+                onComplete({
+                  team,
+                  player: goalScorer,
+                  time,
+                  ownGoal,
+                  penaltyKick,
+                });
+                dispatch({ type: AddGoalActions.reset });
+              }}
+            >
+              save goal
+            </button>
+            <button
+              onClick={() => {
+                dispatch({ type: AddGoalActions.reset });
+              }}
+            >
+              Cancel
+            </button>
+          </div>
         </>
       )}
     </div>

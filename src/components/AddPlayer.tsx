@@ -26,8 +26,7 @@ function AddPlayer(props: AddPlayerProps) {
     setTeamId(-1);
   };
   return (
-    <div>
-      <h4>Add Player</h4>
+    <div className='AddPlayer'>
       <div className='inputRow'>
         <label htmlFor='playerFirstName'>First Name</label>
         <input

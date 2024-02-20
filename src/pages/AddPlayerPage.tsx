@@ -6,17 +6,17 @@ import { IPlayer } from '../types'
 export default function AddPlayerPage() {
   const { teams } = useContext(StateContext);
   return (
-    <div className='AddPlayerPage'>
+    <div className='AddPlayerPage page'>
       <h1>Add a player</h1>
-      <AddPlayer
-        teams={teams}
-        onComplete={(p: IPlayer) => {
-
-        }}
-        onCancel={() => {
-          // dispatch({ type: AddGoalActions.addNewPlayer, payload: false });
-        }}
-      />
+      <div className='AddPlayer__wrapper'>
+        <AddPlayer
+          teams={teams}
+          onComplete={(p: IPlayer) => {}}
+          onCancel={() => {
+            // dispatch({ type: AddGoalActions.addNewPlayer, payload: false });
+          }}
+        />
+      </div>
     </div>
   );
 }

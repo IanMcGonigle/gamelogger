@@ -40,7 +40,9 @@ export default function GameRecorder (props: GameRecorderProps) {
   return (
     <div className='GameRecorder'>
       <div className='inputRow'>
-        {matchDate && <h3>{format(new Date(matchDate), 'PPPP')}</h3>}
+        {matchDate && <h3 onDoubleClick={ () => {
+          dispatch({ type: GameRecorderActions.setMatchDate, payload: null});
+        }}>{format(new Date(matchDate.split('-').join('/')), 'PPPP')}</h3>}
         {!matchDate && (
           <input
             type='date'
@@ -63,7 +65,7 @@ export default function GameRecorder (props: GameRecorderProps) {
           players={players}
           label='Home'
           onGoal={(g: IGoal) => {
-            dispatch({type: GameRecorderActions.setHomeGoals, payload:g})
+            dispatch({ type: GameRecorderActions.setHomeGoals, payload: g });
           }}
           onTeamSelect={(t: ITeam) => {
             dispatch({ type: GameRecorderActions.setHomeTeam, payload: t });
