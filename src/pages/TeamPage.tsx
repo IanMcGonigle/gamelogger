@@ -46,7 +46,6 @@ export default function TeamPage() {
             <tbody>
               {selectedTeam?.matches.map((g: IGame) => {
                 const selId = selectedTeam?.id;
-                console.log(g);
                 const { home, homeGoals, awayGoals, winner, draw } = g;
                 const location = g.home?.id === selId ? 'Home' : 'Away';
                 const opponent = g.home?.id === selId ? g.away : g.home;

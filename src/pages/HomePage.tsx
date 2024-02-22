@@ -13,7 +13,7 @@ export default function HomePage() {
           .map((t: ITeam) => {
             return (
               <li key={t.id}>
-                <a href={`/teams/${t.id}`}>
+                <a href={`#/teams/${t.id}`}>
                   <img src={t.badge} alt={t.name} />
                 </a>
               </li>
