@@ -7,7 +7,6 @@ export default function AddPlayerPage() {
   const { teams } = useContext(StateContext);
   return (
     <div className='AddPlayerPage page'>
-      <h1>Add a player</h1>
       <div className='AddPlayer__wrapper'>
         <AddPlayer
           teams={teams}

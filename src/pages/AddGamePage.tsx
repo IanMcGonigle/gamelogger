@@ -21,7 +21,6 @@ export default function AddGamePage() {
   }, [])
   return (
     <div className='AddGamePage page'>
-      <h1>Add a Game</h1>
       {currentGame && (
         <GameRecorder
           teams={teams}

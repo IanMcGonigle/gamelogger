@@ -10,7 +10,6 @@ export default function TeamsPage() {
 
   return (
     <div className='Teams page'>
-      <h1>Teams</h1>
       <table>
         <thead>
           <tr>

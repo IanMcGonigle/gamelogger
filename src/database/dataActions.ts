@@ -1,13 +1,9 @@
-import { setDoc, getDoc, doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { setDoc, getDoc, doc, updateDoc, increment } from 'firebase/firestore';
 import { db, colletionPlayers } from '../database/firebase';
 import { GameState } from '../reducers/GameRecorderReducer';
 import { IGame, IPlayer, ITeam } from '../types';
 
 export const updateGame = async (id: string, gameData: GameState) => {
-  console.log('updateGame called ', gameData);
-
-  const { home, away } = gameData;
-  console.log( {home})
 
   try{
     const docRef = doc(db, 'games', id);
@@ -31,6 +27,15 @@ export const addNewPlayer = async ( playerData:IPlayer ) => {
     return error;
   }
 }
+
+export const incrementGoalsScored = async (playerData: IPlayer, count:number) => {
+  try {
+    const playerDocRef = doc(db, 'players', playerData.id);
+    await updateDoc(playerDocRef, { goals: increment(count) });
+  } catch (error) {
+    console.log('error adding goal');
+  }
+};
 
 const updateTeamStats = async (gameId: string, team:ITeam) => {
   const teamRef = doc(db, 'teams', team.id);

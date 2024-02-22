@@ -1,6 +1,5 @@
 import React, {useReducer} from 'react';
-import { doc, increment, updateDoc } from 'firebase/firestore';
-import { db } from '../database/firebase';
+import { incrementGoalsScored } from '../database/dataActions';
 import { ITeam, IPlayer } from '../types';
 import { AddGoalActions, AddGoalReducer, AddGoalState, initialState } from '../reducers/AddGoalReducer';
 import AddPlayer from './AddPlayer';
@@ -148,9 +147,8 @@ export default function AddGoal (props: AddGoalProps) {
             <button
               disabled={!(goalScorer)}
               onClick={async () => {
-                const playerDocRef = doc(db, 'players', goalScorer.id);
                 const add: number = ownGoal ? 0 : 1;
-                await updateDoc(playerDocRef, { goals: increment(add) });
+                await incrementGoalsScored(goalScorer, add);
                 onComplete({
                   team,
                   player: goalScorer,

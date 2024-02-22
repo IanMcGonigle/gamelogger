@@ -20,7 +20,6 @@ export default function PlayersPage() {
   }
   return (
     <div className='PlayersPage page'>
-      <h1>Goal leaders</h1>
       <table>
         <thead>
           <tr>

@@ -23,7 +23,6 @@ export default function EditGamePage() {
   }, [games, gameId]);
   return (
     <div className='AddGamePage page'>
-      <h1>Edit a Game</h1>
       {currentGame && (
         <GameRecorder
           teams={teams}

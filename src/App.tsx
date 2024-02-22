@@ -1,8 +1,9 @@
 import React, { useState, useEffect} from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { IPlayer, ITeam, Team } from './types';
 import { InitialGameState } from './reducers/GameRecorderReducer';
 import './App.scss';
+import logo from './images/logo-small.png';
 import { StateContext } from './context/StateContext';
 import { colletionTeams, db } from './database/firebase';
 import {
@@ -14,6 +15,7 @@ import {
   updateDoc,
   doc
 } from 'firebase/firestore';
+import { motion, AnimatePresence } from 'framer-motion';
 import MainNavigation from './components/MainNavigation';
 import GamesPage from './pages/GamesPage';
 import TeamsPage from './pages/TeamsPage';
@@ -23,8 +25,9 @@ import HomePage from './pages/HomePage';
 import AddGamePage from './pages/AddGamePage';
 import EditGamePage from './pages/EditGamePage';
 import TeamPage from './pages/TeamPage';
+import AnimatedPage from './pages/AnimatedPage';
 
-import { badges } from './dummyPlayers';
+// import { badges } from './dummyPlayers';
 
 
 function App() {
@@ -75,22 +78,84 @@ function App() {
     loadGames();
   }, []);
 
+  const myLocation = useLocation();
+
   return (
     <StateContext.Provider
       value={{ games, teams, players, gameState: InitialGameState }}
     >
       <div className='App'>
         <MainNavigation />
-        <Routes>
-          <Route path='games' element={<GamesPage />}></Route>
-          <Route path='teams' element={<TeamsPage />}></Route>
-          <Route path='players' element={<PlayersPage />}></Route>
-          <Route path='add-player' element={<AddPlayerPage />}></Route>
-          <Route path='add-game' element={<AddGamePage />}></Route>
-          <Route path='games/edit/:gameId' element={<EditGamePage />}></Route>
-          <Route path='teams/:teamId' element={<TeamPage />}></Route>
-          <Route path='/' element={<HomePage />}></Route>
+        <Routes location={myLocation} key={myLocation.pathname}>
+          <Route
+            path='games'
+            element={
+              <AnimatedPage title='Games'>
+                <GamesPage />
+              </AnimatedPage>
+            }
+          ></Route>
+          <Route
+            path='teams'
+            element={
+              <AnimatedPage title='Leader Board'>
+                <TeamsPage />
+              </AnimatedPage>
+            }
+          ></Route>
+          <Route
+            path='players'
+            element={
+              <AnimatedPage title='Goal Leaders'>
+                <PlayersPage />
+              </AnimatedPage>
+            }
+          ></Route>
+          <Route
+            path='add-player'
+            element={
+              <AnimatedPage title='Add a player'>
+                <AddPlayerPage />
+              </AnimatedPage>
+            }
+          ></Route>
+          <Route
+            path='add-game'
+            element={
+              <AnimatedPage title='Add a game'>
+                <AddGamePage />
+              </AnimatedPage>
+            }
+          ></Route>
+          <Route
+            path='games/edit/:gameId'
+            element={
+              <AnimatedPage title='EditGamePage'>
+                <EditGamePage />
+              </AnimatedPage>
+            }
+          ></Route>
+          <Route
+            path='teams/:teamId'
+            element={
+              <AnimatedPage title='23/24'>
+                <TeamPage />
+              </AnimatedPage>
+            }
+          ></Route>
+          <Route
+            path='/'
+            element={
+              <AnimatedPage title='Premier League 2023/24'>
+                <HomePage />
+              </AnimatedPage>
+            }
+          ></Route>
         </Routes>
+        <footer>
+          <img src={logo} />
+          Grant & Dad's EPL Game Tracker
+        </footer>
       </div>
     </StateContext.Provider>
   );

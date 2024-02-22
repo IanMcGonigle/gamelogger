@@ -24,7 +24,6 @@ export default function GamesPage() {
   const { games, teams, players, gameState } = useContext(StateContext);
   return (
     <div className='GamesPage page'>
-      <h1>Games</h1>
       {!currentGame && games.length > 0 && (
         <>
             <button

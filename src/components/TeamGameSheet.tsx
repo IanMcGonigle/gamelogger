@@ -34,7 +34,7 @@ const TeamGameSheet = (props: TeamGameSheetProps) => {
             onCancel={() => {}}
           />
           {goals && goals.length > 0 && (
-            <ul>
+            <ol>
               {goals.map((g: IGoal, i: number) => {
                 return (
                   <li
@@ -49,7 +49,7 @@ const TeamGameSheet = (props: TeamGameSheetProps) => {
                   </li>
                 );
               })}
-            </ul>
+            </ol>
           )}
         </>
       ) : (

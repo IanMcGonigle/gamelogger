@@ -1,13 +1,13 @@
 import React, { useContext } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link} from 'react-router-dom';
 import { StateContext } from '../context/StateContext';
 import { Team, ITeam, IGame, IGoal } from '../types';
+import { useSelectedTeam } from '../hooks/useSelectedTeam';
 
 export default function TeamPage() {
-  const { teamId } = useParams();
   const { teams:teamData } = useContext(StateContext);
   const teams = teamData.map((t: ITeam) => new Team({...t}));
-  const selectedTeam = teamData.find( (t:ITeam) => t.id === teamId);
+  const selectedTeam = useSelectedTeam();
   teams.sort( (t1:Team, t2:Team) => t2.getPoints() - t1.getPoints() );
 
   const renderGoals = (goals:IGoal[]): React.ReactElement => {
@@ -29,10 +29,6 @@ export default function TeamPage() {
     <div className='Team page'>
       {selectedTeam && (
         <>
-          <h1>
-            <img src={selectedTeam.badge} alt={selectedTeam.name} />
-            {selectedTeam.name}
-          </h1>
           <table>
             <thead>
               <tr>
