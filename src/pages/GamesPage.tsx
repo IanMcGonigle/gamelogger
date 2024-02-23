@@ -1,34 +1,24 @@
-import React, { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
-import {
-  collection,
-  addDoc,
-  serverTimestamp,
-  setDoc,
-  getDocs,
-  doc,
-  DocumentData,
-} from 'firebase/firestore';
-import {
-  db,
-  colletionTeams,
-  colletionPlayers,
-  colletionGames,
-} from '../database/firebase';
-import GameRecorder from '../components/GameRecorder'
+import React, { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
+import { DocumentData } from 'firebase/firestore';
 import { StateContext } from '../context/StateContext';
-import { IGame, ITeam, IGoal } from '../types';
+import { deleteGame } from '../database/dataActions';
 
 export default function GamesPage() {
-  const [currentGame, setCurrentGame] = useState<DocumentData | undefined>();
-  const { games, teams, players, gameState } = useContext(StateContext);
+  const { games } = useContext(StateContext);
+  const navigate = useNavigate();
+
+  games.sort((a: DocumentData, b: DocumentData) => {
+    return new Date(b.data().date).getTime() - new Date(a.data().date).getTime();
+  });
   return (
     <div className='GamesPage page'>
-      {!currentGame && games.length > 0 && (
+      {games.length > 0 && (
         <>
             <button
               onClick={() => {
-                window.location.href = '/add-game';
+                navigate('/add-game');
               }}
             >
               Add New Game
@@ -48,11 +38,35 @@ export default function GamesPage() {
                 const { date, home, away, homeGoals, awayGoals } = g.data();
                 return (
                   <tr key={g.id}>
-                    <td>{date}</td>
-                    <td>{`${home?.name}: ${homeGoals?.length}`}</td>
-                    <td>{`${away?.name}: ${awayGoals?.length}`}</td>
+                    <td>{format(new Date(date.split('-').join('/')), 'PP')}</td>
                     <td>
-                      <Link to={`edit/${g.id}`}>Edit</Link>
+                      <Link to={`../teams/${home?.id}`}>
+                        {home?.badge && <img src={home?.badge} alt={home?.name} width='25px' />}
+                        {`${home?.name}: ${homeGoals?.length}`}
+                      </Link>
+                    </td>
+                    <td>
+                      <Link to={`../teams/${away?.id}`}>
+                        {away?.badge && <img src={away?.badge} alt={away?.name} width='25px' />}
+                        {`${away?.name}: ${awayGoals?.length}`}
+                      </Link>
+                    </td>
+                    <td>
+                      <Link
+                        className='btn'
+                        title='Edit Game'
+                        to={`edit/${g.id}`}
+                      >
+                        &#x270E;
+                      </Link>
+                      <button
+                        title='Delete game'
+                        onClick={(e) => {
+                          deleteGame(g.id);
+                        }}
+                      >
+                        &#x2716;
+                      </button>
                     </td>
                   </tr>
                 );

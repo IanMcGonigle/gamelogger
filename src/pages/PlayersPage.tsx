@@ -10,8 +10,6 @@ export default function PlayersPage() {
     return result;
   };
   const sortByGoalsScored = ( p1:IPlayer, p2:IPlayer ):number => {
-    // console.log(getFullName(p1), ': ',p1.goals, getFullName(p2), ': ', p2.goals );
-    // console.log('returning : ', p1.goals - p2.goals);
     return p2.goals - p1.goals;
   }
   const teamNameById = (id:string|number):string => {

@@ -61,7 +61,7 @@ export default function TeamPage() {
                   outcome = 'Loss';
                 }
                 return (
-                  <tr>
+                  <tr key={g.id}>
                     <td>{g.date}</td>
                     <td>
                       <Link to={`../teams/${opponent.id}`}>
