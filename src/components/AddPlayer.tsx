@@ -72,7 +72,7 @@ function AddPlayer(props: AddPlayerProps) {
           })}
         </select>
       </div>
-      <div className='inputRow'>
+      <div className='buttonRow'>
         <button
           onClick={ async () => {
             const playerData = getData() as IPlayer;

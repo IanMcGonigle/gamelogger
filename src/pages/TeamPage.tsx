@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { Link} from 'react-router-dom';
+import { format } from 'date-fns';
 import { StateContext } from '../context/StateContext';
 import { Team, ITeam, IGame, IGoal } from '../types';
 import { useSelectedTeam } from '../hooks/useSelectedTeam';
@@ -12,7 +13,7 @@ export default function TeamPage() {
 
   const renderGoals = (goals:IGoal[]): React.ReactElement => {
     return (
-      <ul>
+      <ul className='goalList'>
         {goals?.map((g:IGoal)=>{
           const { ownGoal, penaltyKick, player} = g;
           const { jerseyNumber, firstName, lastName } = player;
@@ -62,13 +63,13 @@ export default function TeamPage() {
                 }
                 return (
                   <tr key={g.id}>
-                    <td>{g.date}</td>
+                    <td>{format(new Date(g.date.split('-').join('/')), 'PP')}</td>
                     <td>
                       <Link to={`../teams/${opponent.id}`}>
                         {opponent?.badge && (
                           <img
                             src={opponent?.badge}
-                            width='50px'
+                            width='30px'
                             alt={opponent?.name}
                           />
                         )}
@@ -92,7 +93,9 @@ export default function TeamPage() {
                     <td>{location}</td>
                     <td>{points}</td>
                     <td>
-                      <Link to={`../games/edit/${g.id}`}>Edit</Link>
+                      <Link className='btn' to={`../games/edit/${g.id}`}>
+                        &#x270E;
+                      </Link>
                     </td>
                   </tr>
                 );

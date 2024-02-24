@@ -14,11 +14,11 @@ export default function TeamsPage() {
         <thead>
           <tr>
             <th>Name</th>
+            <th>Points</th>
             <th>Matches</th>
             <th>Wins</th>
             <th>Losses</th>
             <th>Draws</th>
-            <th>Points</th>
           </tr>
         </thead>
         <tbody>
@@ -34,11 +34,11 @@ export default function TeamsPage() {
                     {t.name}
                   </Link>
                 </td>
+                <td>{wins * 3 + draws}</td>
                 <td>{t.matches.length}</td>
                 <td>{wins}</td>
                 <td>{loss}</td>
                 <td>{draws}</td>
-                <td>{wins * 3 + draws}</td>
               </tr>
             );
           })}

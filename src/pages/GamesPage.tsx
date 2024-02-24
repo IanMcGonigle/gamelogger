@@ -36,18 +36,34 @@ export default function GamesPage() {
             <tbody>
               {games.map((g: DocumentData) => {
                 const { date, home, away, homeGoals, awayGoals } = g.data();
+                const formattedDate = format(
+                  new Date(date.split('-').join('/')),
+                  'PP'
+                );
                 return (
                   <tr key={g.id}>
-                    <td>{format(new Date(date.split('-').join('/')), 'PP')}</td>
+                    <td>{formattedDate}</td>
                     <td>
                       <Link to={`../teams/${home?.id}`}>
-                        {home?.badge && <img src={home?.badge} alt={home?.name} width='25px' />}
+                        {home?.badge && (
+                          <img
+                            src={home?.badge}
+                            alt={home?.name}
+                            width='25px'
+                          />
+                        )}
                         {`${home?.name}: ${homeGoals?.length}`}
                       </Link>
                     </td>
                     <td>
                       <Link to={`../teams/${away?.id}`}>
-                        {away?.badge && <img src={away?.badge} alt={away?.name} width='25px' />}
+                        {away?.badge && (
+                          <img
+                            src={away?.badge}
+                            alt={away?.name}
+                            width='25px'
+                          />
+                        )}
                         {`${away?.name}: ${awayGoals?.length}`}
                       </Link>
                     </td>
@@ -62,7 +78,10 @@ export default function GamesPage() {
                       <button
                         title='Delete game'
                         onClick={(e) => {
-                          deleteGame(g.id);
+                          const message = `Are you sure you want to delete the following match: ${home.name} vs. ${away.name} from ${formattedDate}?`;
+                          if (window.confirm(message)) {
+                            deleteGame(g.id);
+                          }
                         }}
                       >
                         &#x2716;
