@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/gamelogger/static/css/main.077f0983.css",
-    "main.js": "/gamelogger/static/js/main.cd4fd5e2.js",
+    "main.css": "/gamelogger/static/css/main.5cb2792b.css",
+    "main.js": "/gamelogger/static/js/main.fd9dfd38.js",
     "static/js/592.b52ad4fc.chunk.js": "/gamelogger/static/js/592.b52ad4fc.chunk.js",
     "static/media/zigzag.png": "/gamelogger/static/media/zigzag.31bc8d6ef7b10593de3b.png",
     "static/media/logo.png": "/gamelogger/static/media/logo.bd160f81b6b3152d5022.png",
@@ -21,12 +21,12 @@
     "static/media/PremierLeagueW01-BoldItalic.woff2": "/gamelogger/static/media/PremierLeagueW01-BoldItalic.7dbf2e6da7b913ad6e6f.woff2",
     "static/media/PremierLeagueW01-Bold.woff2": "/gamelogger/static/media/PremierLeagueW01-Bold.5ddd953af614b3bbbce6.woff2",
     "index.html": "/gamelogger/index.html",
-    "main.077f0983.css.map": "/gamelogger/static/css/main.077f0983.css.map",
-    "main.cd4fd5e2.js.map": "/gamelogger/static/js/main.cd4fd5e2.js.map",
+    "main.5cb2792b.css.map": "/gamelogger/static/css/main.5cb2792b.css.map",
+    "main.fd9dfd38.js.map": "/gamelogger/static/js/main.fd9dfd38.js.map",
     "592.b52ad4fc.chunk.js.map": "/gamelogger/static/js/592.b52ad4fc.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.077f0983.css",
-    "static/js/main.cd4fd5e2.js"
+    "static/css/main.5cb2792b.css",
+    "static/js/main.fd9dfd38.js"
   ]
 }
