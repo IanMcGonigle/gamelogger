@@ -153,8 +153,7 @@ function App() {
           ></Route>
         </Routes>
         <footer>
-          <img src={logo} />
-          Grant & Dad's EPL Game Tracker
+          Grant & Dad's <img src={logo} alt='EPL Logo' /> Game Tracker
         </footer>
       </div>
     </StateContext.Provider>

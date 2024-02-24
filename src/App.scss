@@ -343,16 +343,21 @@ td {
 
   nav a{
     padding: 0.5rem 0.75rem ;
+    font-size: 1.5rem;
     text-decoration: none;
     display: block;
     font-family: var(--epl-heavy);
     text-shadow: 1px 1px 1px var(--epl-dark-purple);
+      @media screen and (min-width:$screen-md){
+       font-size: 1rem;
+      }
+
     &.active,
     &:hover {
       background-color: var(--epl-dark-purple);
       text-shadow: 1px 1px 1px var(--epl-light-purple);
 
-      @media screen and (min-width:600px){
+      @media screen and (min-width:$screen-md){
         border-bottom: 5px solid var(--epl-pink);
       }
     }
@@ -556,7 +561,8 @@ footer {
   background-color: var(--epl-dark-purple);
   display: flex;
   align-items: center;
-  flex-direction: row-reverse;
+  justify-content: center;
+  flex-direction: row;
   font-family: var(--epl-bold);
   padding: 0 0.5rem;
   height: var(--epl-footer-height);
