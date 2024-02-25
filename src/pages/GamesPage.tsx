@@ -35,11 +35,12 @@ export default function GamesPage() {
             </thead>
             <tbody>
               {games.map((g: DocumentData) => {
-                const { date, home, away, homeGoals, awayGoals } = g.data();
-                const formattedDate = format(
+                const { date = '', home, away, homeGoals, awayGoals } = g.data();
+                let formattedDate:string;
+                formattedDate = date ? format(
                   new Date(date.split('-').join('/')),
                   'PP'
-                );
+                ) : '';
                 return (
                   <tr key={g.id}>
                     <td>{formattedDate}</td>

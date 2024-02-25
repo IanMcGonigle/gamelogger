@@ -17,7 +17,9 @@ export const InitialGameState: GameState = {
   homeGoals: [],
   awayGoals: [],
   date: '',
-  draw: true
+  draw: true,
+  winner: null,
+  loser: null
 };
 
 export enum GameRecorderActions {

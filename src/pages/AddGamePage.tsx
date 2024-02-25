@@ -16,7 +16,6 @@ export default function AddGamePage() {
 
   useEffect( () => {
     const docRef = doc(colletionGames);
-    console.log(docRef);
     setCurrentGame(docRef);
   }, [])
   return (

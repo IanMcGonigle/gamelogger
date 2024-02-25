@@ -4,10 +4,11 @@ import { format } from 'date-fns';
 import { StateContext } from '../context/StateContext';
 import { Team, ITeam, IGame, IGoal } from '../types';
 import { useSelectedTeam } from '../hooks/useSelectedTeam';
+import { DocumentReference } from 'firebase/firestore';
 
 export default function TeamPage() {
-  const { teams:teamData } = useContext(StateContext);
-  const teams = teamData.map((t: ITeam) => new Team({...t}));
+  const { teams:teamData, games } = useContext(StateContext);
+  const teams = teamData.map((t: ITeam) => new Team(t, games));
   const selectedTeam = useSelectedTeam();
   teams.sort( (t1:Team, t2:Team) => t2.getPoints() - t1.getPoints() );
 
@@ -45,7 +46,9 @@ export default function TeamPage() {
               </tr>
             </thead>
             <tbody>
-              {selectedTeam?.matches.map((g: IGame) => {
+              {selectedTeam?.matches.map((gameId:string) => {
+                const gameDoc:any = games.find( (doc:any) => doc.id === gameId);
+                const g:IGame = gameDoc?.data() as IGame;
                 const selId = selectedTeam?.id;
                 const { home, homeGoals, awayGoals, winner, draw } = g;
                 const location = g.home?.id === selId ? 'Home' : 'Away';

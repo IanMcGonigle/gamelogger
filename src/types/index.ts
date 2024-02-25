@@ -38,33 +38,43 @@ export interface ITeam {
   id: string,
   name: string,
   badge?: string,
-  matches:Array<IGame>,
+  matches:Array<string>,
 };
 
 export class Team implements ITeam {
   id: string;
   name: string;
-  matches: IGame[];
+  matches: string[];
+  games: IGame[];
   badge:string;
-  // teams: ITeam[];
-  constructor(data: ITeam) {
+  constructor(data: ITeam, gameData:IGame[]) {
     this.id = data.id;
     this.name = data.name;
     this.badge = data.badge || '';
     this.matches = data.matches || [];
+
+
+    this.games = gameData.reduce( (result:IGame[], game:IGame) => {
+      if( data.matches.includes(game.id) ){
+        return [...result, game];
+      }else{
+        return result;
+      }
+    }, [])
+
   }
   getWins() {
-    return this.matches.filter((g: IGame) => {
+    return this.games.filter((g: IGame) => {
       return g.winner?.id === this.id;
     });
   }
   getLosses() {
-    return this.matches.filter((g: IGame) => {
+    return this.games.filter((g: IGame) => {
       return g.loser?.id === this.id;
     });
   }
   getDraws() {
-    return this.matches.filter((g: IGame) => {
+    return this.games.filter((g: IGame) => {
       return g.draw === true;
     });
   }
