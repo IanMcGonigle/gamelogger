@@ -1,45 +1,58 @@
-import React, { useCallback, useEffect, useReducer, useState} from 'react';
+import React, { useCallback, useEffect, useReducer, useContext} from 'react';
 import { format } from 'date-fns';
 import { setDoc,doc } from 'firebase/firestore';
-import { ITeam, GameRecorderProps, IGoal, Team } from '../types';
+import { ITeam, Player, IGoal, Team, Goal,  } from '../types';
 import { db } from '../database/firebase';
 import {  updateGame as update } from '../database/dataActions';
 import TeamGameSheet from './TeamGameSheet';
+import { StateContext } from '../context/StateContext';
 import {
   GameState,
   GameRecorderReducer,
   GameRecorderActions,
 } from '../reducers/GameRecorderReducer';
+import { match } from 'assert';
 
+type GameRecorderProps = {
+  gameData: GameState;
+  teams: Array<Team>;
+  players: Array<Player>;
+  goals:Array<Goal>;
+  id: string;
+};
 
 
 export default function GameRecorder (props: GameRecorderProps) {
-  const { teams, players, gameData, id } = props;
+  const { teams, players, gameData, id, goals } = props;
   const [state, dispatch] = useReducer(GameRecorderReducer, gameData);
-  const { date:matchDate, home:homeTeam, away:awayTeam, homeGoals, awayGoals, draw, winner, loser } = state;
+  const {
+    date: matchDate,
+    home: homeTeamId,
+    away: awayTeamId,
+    goals:goalIds,
+  } = state;
 
   const getData = useCallback(() => {
     return {
       date: matchDate,
-      home: homeTeam,
-      away: awayTeam,
-      homeGoals,
-      awayGoals,
-      winner,
-      loser,
-      draw,
+      home: homeTeamId,
+      away: awayTeamId,
+      goals: goalIds,
     };
-  }, [matchDate,homeTeam,awayTeam,homeGoals,awayGoals,draw,winner,loser]);
+  }, [matchDate, homeTeamId, awayTeamId, goalIds]);
 
   const updateGame = useCallback( async ()=> {
     const data = getData();
     await update(id, data);
     dispatch({ type: GameRecorderActions.updateGame, payload: data });
-  },[getData, id])
+  },[getData, id]);
+
+  const homeTeam: Team|undefined = teams.find((t: Team) => t.id === homeTeamId);
+  const awayTeam: Team|undefined = teams.find((t: Team) => t.id === awayTeamId);
 
   useEffect(() => {
     updateGame();
-  }, [updateGame, homeGoals, awayGoals]);
+  }, [updateGame]);
 
   return (
     <div className='GameRecorder'>
@@ -72,15 +85,17 @@ export default function GameRecorder (props: GameRecorderProps) {
       </div>
       <div className='teamSheets'>
         <TeamGameSheet
+          matchId={id}
+          date={matchDate}
           us={homeTeam}
           them={awayTeam}
-          goals={homeGoals}
+          goals={goals?.filter((g: Goal) => g.for === homeTeamId)}
           teams={teams}
           players={players}
           label='Home'
-          onGoal={(g: IGoal) => {
-            dispatch({ type: GameRecorderActions.setHomeGoals, payload: g });
-            console.log('homegoals ', homeGoals.length);
+          onGoal={(g: Goal) => {
+            // dispatch({ type: GameRecorderActions.setHomeGoals, payload: g });
+            // console.log('homegoals ', homeGoals.length);
           }}
           onTeamSelect={(t: ITeam) => {
             dispatch({ type: GameRecorderActions.setHomeTeam, payload: t });
@@ -88,14 +103,16 @@ export default function GameRecorder (props: GameRecorderProps) {
         />
         <span className='versus'>VS</span>
         <TeamGameSheet
+          matchId={id}
+          date={matchDate}
           us={awayTeam}
           them={homeTeam}
-          goals={awayGoals}
+          goals={goals?.filter((g: Goal) => g.for === awayTeamId)}
           teams={teams}
           players={players}
           label='Away'
           onGoal={(g: IGoal) => {
-            dispatch({ type: GameRecorderActions.setAwayGoals, payload: g });
+            // dispatch({ type: GameRecorderActions.setAwayGoals, payload: g });
           }}
           onTeamSelect={(t: ITeam) => {
             dispatch({ type: GameRecorderActions.setAwayTeam, payload: t });

@@ -1,16 +1,13 @@
 import React, { useContext } from 'react';
 import { StateContext } from '../context/StateContext';
-import { IPlayer, ITeam } from '../types';
+import { Player, ITeam } from '../types';
 
 
 export default function PlayersPage() {
   const { players, teams } = useContext(StateContext);
-  const getFullName = (p:IPlayer):string => {
-    const result = `#${p.jerseyNumber} ${p.firstName} ${p.lastName}` || '';
-    return result;
-  };
-  const sortByGoalsScored = ( p1:IPlayer, p2:IPlayer ):number => {
-    return p2.goals - p1.goals;
+
+  const sortByGoalsScored = ( p1:Player, p2:Player ):number => {
+    return p2.goalsScoredCount - p1.goalsScoredCount;
   }
   const teamNameById = (id:string|number):string => {
     const t: ITeam = teams.find((t: ITeam) => t.id === id);
@@ -28,12 +25,12 @@ export default function PlayersPage() {
           </tr>
         </thead>
         <tbody>
-          {players.sort(sortByGoalsScored).map((p: IPlayer, index: number) => {
+          {players.sort(sortByGoalsScored).map((p: Player, index: number) => {
             return (
               <tr key={p.id}>
                 <td>{index + 1}</td>
-                <td>{getFullName(p)}</td>
-                <td>{p.goals || 0}</td>
+                <td>{p.fullName}</td>
+                <td>{p.goalsScoredCount || 0}</td>
                 <td>{teamNameById(p.teamId)}</td>
               </tr>
             );

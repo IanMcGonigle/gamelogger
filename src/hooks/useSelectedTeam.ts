@@ -1,11 +1,11 @@
 import { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { StateContext } from '../context/StateContext';
-import { ITeam } from '../types';
+import { Team } from '../types';
 
-export function useSelectedTeam():ITeam {
+export function useSelectedTeam():Team {
   const { teamId } = useParams();
   const { teams: teamData } = useContext(StateContext);
-  const selectedTeam = teamData.find((t: ITeam) => t.id === teamId);
+  const selectedTeam = teamData.find((t: Team) => t.id === teamId);
   return selectedTeam;
 }

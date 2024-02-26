@@ -12,7 +12,7 @@ import GameRecorder from '../components/GameRecorder';
 
 export default function AddGamePage() {
   const [currentGame, setCurrentGame] = useState<DocumentData | undefined>();
-  const { teams, players, gameState } = useContext(StateContext);
+  const { teams, players, gameState, goals } = useContext(StateContext);
 
   useEffect( () => {
     const docRef = doc(colletionGames);
@@ -26,6 +26,7 @@ export default function AddGamePage() {
           players={players}
           gameData={gameState}
           id={currentGame.id}
+          goals={goals}
         />
       )}
     </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { IPlayer, ITeam, Team } from './types';
+import { IPlayer, Player, ITeam, Team, IGoal, Goal, Match, IMatch } from './types';
 import { InitialGameState } from './reducers/GameRecorderReducer';
 import './App.scss';
 import logo from './images/logo-small.png';
@@ -32,16 +32,28 @@ import AnimatedPage from './pages/AnimatedPage';
 
 function App() {
 
-  const [players, setPlayers] = useState<IPlayer[] | []>([]);
-  const [teams, setTeams] = useState<ITeam[]>([]);
-  const [games, setGames] = useState<DocumentData[]>([])
+  const [players, setPlayers] = useState<Player[] | []>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [goals, setGoals] = useState<Goal[]>([]);
+  const [games, setGames] = useState<Match[]>([])
 
+  const loadGoals = async () => {
+      const q = query(collection(db, 'goals'));
+      onSnapshot(q, (querySnapshot) => {
+        const newGoals: Array<Goal> = querySnapshot.docs.filter( item => Boolean(item.data()?.name)).map((item) => {
+          const data = item.data() as IGoal;
+            return new Goal({...data, id: item.id});
+        });
+        setGoals(newGoals);
+      });
+
+  }
   const loadTeams = async () => {
       const q = query(collection(db, 'teams'));
       onSnapshot(q, (querySnapshot) => {
-        const newTeams: Array<ITeam> = querySnapshot.docs.filter( item => Boolean(item.data()?.name)).map((item) => {
-          const { name, badge, matches = [] } = item.data() as ITeam;
-            return { id: item.id, name, matches, badge } as ITeam;
+        const newTeams: Array<Team> = querySnapshot.docs.filter( item => Boolean(item.data()?.name)).map((item) => {
+          const data = item.data() as ITeam;
+            return new Team({...data, id:item.id}, games);
         });
         setTeams(newTeams);
       });
@@ -50,16 +62,9 @@ function App() {
   const loadPlayers = async () => {
     const q = query(collection(db,'players'));
     onSnapshot(q, (querySnapshot) => {
-      const newPlayers: Array<IPlayer> = querySnapshot.docs.map((item) => {
-        const { firstName, lastName, jerseyNumber, teamId, goals } = item.data();
-        return {
-          id: item.id,
-          firstName,
-          lastName,
-          jerseyNumber,
-          teamId,
-          goals,
-        };
+      const newPlayers: Array<Player> = querySnapshot.docs.map((item) => {
+        const data = { ...item.data(), id: item.id } as IPlayer;
+        return new Player(data, goals);
       });
       setPlayers(newPlayers);
     });
@@ -67,22 +72,27 @@ function App() {
   const loadGames = async () => {
     const q = query(collection(db, 'games'));
     onSnapshot(q, (querySnapshot) => {
+      const newGames: Match[] = querySnapshot.docs.map( (item) => {
+        const data:IMatch = item.data() as IMatch;
+        return new Match({...data, id:item.id}, goals, teams);
+      });
       console.log('set games')
-      setGames(querySnapshot.docs);
+      setGames(newGames);
     });
   }
 
   useEffect(() => {
+    loadGoals();
     loadTeams();
     loadPlayers();
     loadGames();
-  }, []);
+  },[]);
 
   const myLocation = useLocation();
 
   return (
     <StateContext.Provider
-      value={{ games, teams, players, gameState: InitialGameState }}
+      value={{ games, teams, players, gameState: InitialGameState, goals }}
     >
       <div className='App'>
         <MainNavigation />

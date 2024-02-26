@@ -1,21 +1,23 @@
 import React from 'react'
 import TeamSelector from './TeamSelector';
 import AddGoal from './AddGoal';
-import { ITeam, IGoal, IPlayer } from '../types';
+import { ITeam, IGoal, IPlayer, Team, Goal, Player } from '../types';
 
 type TeamGameSheetProps = {
-  us?: ITeam;
-  them?: ITeam;
-  teams: Array<ITeam>;
-  goals: Array<IGoal>;
-  players: Array<IPlayer>;
+  date?:string,
+  matchId?: string;
+  us?: Team;
+  them?: Team;
+  teams: Array<Team>;
+  goals: Array<Goal>;
+  players: Array<Player>;
   label: string
   onGoal: Function;
   onTeamSelect: Function;
 };
 
 const TeamGameSheet = (props: TeamGameSheetProps) => {
-  const { teams, us, them, goals, label,players, onGoal, onTeamSelect } = props;
+  const { teams, us, them, goals, label, players, onGoal, onTeamSelect, date = "", matchId = "" } = props;
   return (
     <div className='team'>
       {us !== undefined ? (
@@ -25,6 +27,8 @@ const TeamGameSheet = (props: TeamGameSheetProps) => {
             {goals.length}
           </h2>
           <AddGoal
+            date={date}
+            match={matchId}
             team={us}
             opponent={them}
             players={players}
@@ -35,15 +39,16 @@ const TeamGameSheet = (props: TeamGameSheetProps) => {
           />
           {goals && goals.length > 0 && (
             <ol>
-              {goals.map((g: IGoal, i: number) => {
+              {goals.map((g: Goal, i: number) => {
+                const player = players.find( (p:Player) => p.id === g.playerId)
                 return (
                   <li
-                    key={`${i}_${g.player.firstName}`}
+                    key={`${i}_${player?.firstName}`}
                     className={`goal-scored${
                       g.ownGoal ? ' goal-scored--own' : ''
                     }`}
                   >
-                    {g.player.firstName} {g.player.lastName}
+                    {player?.fullName}
                     {g.ownGoal ? `(OG)` : ``}
                     {g.penaltyKick ? `(P)` : ``}
                   </li>
@@ -56,7 +61,7 @@ const TeamGameSheet = (props: TeamGameSheetProps) => {
         <>
           <p>Select {label}:</p>
           <TeamSelector
-            teams={teams.filter((t: ITeam) => t.id !== them?.id)}
+            teams={teams.filter((t: Team) => t.id !== them?.id)}
             setTeam={(t: ITeam) => {
               onTeamSelect(t);
             }}

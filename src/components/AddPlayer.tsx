@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import { addNewPlayer } from '../database/dataActions';
-import { AddPlayerProps, IPlayer } from '../types';
+import { Team, IPlayer } from '../types';
+
+type AddPlayerProps = {
+  teams: Array<Team>;
+  onComplete: Function;
+  onCancel: Function;
+};
 
 function AddPlayer(props: AddPlayerProps) {
   const { teams, onComplete, onCancel } = props;
@@ -8,7 +14,7 @@ function AddPlayer(props: AddPlayerProps) {
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [jerseyNumber, setJerseyNumber] = useState<string>('');
-  const [teamId, setTeamId] = useState<number | string>(selectedTeam);
+  const [teamId, setTeamId] = useState<string>(selectedTeam);
 
   const getData = () => {
     return {
@@ -16,14 +22,14 @@ function AddPlayer(props: AddPlayerProps) {
       lastName: lastName,
       jerseyNumber: jerseyNumber,
       teamId: teamId,
-      goals: 0,
+      goals: [],
     };
   }
   const reset = () =>{
     setFirstName('')
     setLastName('')
     setJerseyNumber('');
-    setTeamId(-1);
+    setTeamId('');
   };
   return (
     <div className='AddPlayer'>

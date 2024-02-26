@@ -1,10 +1,10 @@
-import { IPlayer, IAction } from '../types';
+import { Player, IAction } from '../types';
 
 export type AddGoalState = {
   addingGoal: boolean;
   addingNewPlayer: boolean;
   time: string;
-  goalScorer: IPlayer | null;
+  goalScorer: Player | null;
   ownGoal: boolean;
   playerSelectValue: string;
   penaltyKick: boolean;
