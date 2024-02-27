@@ -29,7 +29,7 @@ export default function EditGamePage() {
           teams={teams}
           players={players}
           gameData={currentGame.getData() as GameState}
-          goals={goals}
+          goals={goals.filter((g: Goal) => g.matchId === currentGame.id)}
         />
       )}
     </div>

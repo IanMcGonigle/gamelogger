@@ -8,6 +8,7 @@ import {
 import {
   colletionGames,
 } from '../database/firebase';
+import { Goal } from '../types';
 import GameRecorder from '../components/GameRecorder';
 
 export default function AddGamePage() {
@@ -26,7 +27,7 @@ export default function AddGamePage() {
           players={players}
           gameData={gameState}
           id={currentGame.id}
-          goals={goals}
+          goals={goals.filter( (g:Goal) => g.matchId === currentGame.id)}
         />
       )}
     </div>

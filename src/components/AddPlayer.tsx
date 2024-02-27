@@ -21,8 +21,7 @@ function AddPlayer(props: AddPlayerProps) {
       firstName: firstName,
       lastName: lastName,
       jerseyNumber: jerseyNumber,
-      teamId: teamId,
-      goals: [],
+      teamId: teamId
     };
   }
   const reset = () =>{

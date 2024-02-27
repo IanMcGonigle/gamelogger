@@ -1,5 +1,5 @@
 import React, {useReducer} from 'react';
-import { incrementGoalsScored, addGoalScored } from '../database/dataActions';
+import { addGoalScored } from '../database/dataActions';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Team, Player, Goal, IGoal } from '../types';
 import { AddGoalActions, AddGoalReducer, AddGoalState, initialState } from '../reducers/AddGoalReducer';
@@ -27,7 +27,7 @@ export default function AddGoal (props: AddGoalProps) {
   }
 
   return (
-    <div className={`AddGoal${addingGoal ? ' zzzzzzAddGoal--addingGoal' : ''}`}>
+    <div className={`AddGoal`}>
       {!addingGoal && (
         <button
           onClick={() => {
@@ -49,12 +49,12 @@ export default function AddGoal (props: AddGoalProps) {
               <AddPlayer
                 teams={[team]}
                 onComplete={(p: Player) => {
-                  console.log(p);
+                  const tempPlayer = new Player(p, []);
                   dispatch({
                     type: AddGoalActions.addNewGoalScorer,
                     payload: {
-                      goalScorer: p,
-                      playerSelectValue: p.fullName,
+                      goalScorer: tempPlayer,
+                      playerSelectValue: tempPlayer.fullName,
                     },
                   });
                 }}
@@ -157,7 +157,7 @@ export default function AddGoal (props: AddGoalProps) {
                   <button
                     disabled={!goalScorer}
                     onClick={async () => {
-                      const add: number = ownGoal ? 0 : 1;
+                      // const add: number = ownGoal ? 0 : 1;
                       const goalData = {
                         date,
                         matchId: match,
@@ -165,12 +165,14 @@ export default function AddGoal (props: AddGoalProps) {
                         against: opponent?.id || '',
                         playerId: goalScorer.id,
                         penaltyKick,
-                        ownGoal
+                        ownGoal,
+                        time: time || ''
                       } as IGoal;
-                      const newGoal = new Goal(goalData);
-                      await addGoalScored(newGoal);
-                      await incrementGoalsScored(goalScorer, add);
+                      // const newGoal = new Goal(goalData);
+                      const goalId = await addGoalScored(goalData);
+                      // await incrementGoalsScored(goalScorer, add);
                       onComplete({
+                        id: goalId,
                         team,
                         player: goalScorer,
                         time,

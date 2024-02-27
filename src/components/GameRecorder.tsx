@@ -32,6 +32,9 @@ export default function GameRecorder (props: GameRecorderProps) {
     goals:goalIds,
   } = state;
 
+  const homeTeam: Team | undefined = teams.find((t: Team) => t.id === homeTeamId);
+  const awayTeam: Team | undefined = teams.find((t: Team) => t.id === awayTeamId);
+
   const getData = useCallback(() => {
     return {
       date: matchDate,
@@ -41,14 +44,17 @@ export default function GameRecorder (props: GameRecorderProps) {
     };
   }, [matchDate, homeTeamId, awayTeamId, goalIds]);
 
-  const updateGame = useCallback( async ()=> {
-    const data = getData();
-    await update(id, data);
-    dispatch({ type: GameRecorderActions.updateGame, payload: data });
-  },[getData, id]);
+  const updateGame = useCallback(async () => {
+    if (matchDate && homeTeamId && awayTeamId) {
+      const data = getData();
+      await update(id, data);
+      dispatch({ type: GameRecorderActions.updateGame, payload: data });
+    }
+  }, [getData, id, matchDate, homeTeamId, awayTeamId]);
 
-  const homeTeam: Team|undefined = teams.find((t: Team) => t.id === homeTeamId);
-  const awayTeam: Team|undefined = teams.find((t: Team) => t.id === awayTeamId);
+  const updateGoal = (g: IGoal) => {
+    dispatch({ type: GameRecorderActions.updateGoals, payload: g.id });
+  };
 
   useEffect(() => {
     updateGame();
@@ -71,16 +77,22 @@ export default function GameRecorder (props: GameRecorderProps) {
           </h3>
         )}
         {!matchDate && (
-          <input
-            type='date'
-            onChange={(e: React.FormEvent) => {
-              const dateInput: string = (e.target as HTMLInputElement).value;
-              dispatch({
-                type: GameRecorderActions.setMatchDate,
-                payload: dateInput,
-              });
-            }}
-          />
+          <>
+            <label className='gameDate' htmlFor='datePicker'>
+              Select Match Date
+            </label>
+            <input
+              id='datePicker'
+              type='date'
+              onChange={(e: React.FormEvent) => {
+                const dateInput: string = (e.target as HTMLInputElement).value;
+                dispatch({
+                  type: GameRecorderActions.setMatchDate,
+                  payload: dateInput,
+                });
+              }}
+            />
+          </>
         )}
       </div>
       <div className='teamSheets'>
@@ -93,12 +105,9 @@ export default function GameRecorder (props: GameRecorderProps) {
           teams={teams}
           players={players}
           label='Home'
-          onGoal={(g: Goal) => {
-            // dispatch({ type: GameRecorderActions.setHomeGoals, payload: g });
-            // console.log('homegoals ', homeGoals.length);
-          }}
-          onTeamSelect={(t: ITeam) => {
-            dispatch({ type: GameRecorderActions.setHomeTeam, payload: t });
+          onGoal={updateGoal}
+          onTeamSelect={(t: Team) => {
+            dispatch({ type: GameRecorderActions.setHomeTeam, payload: t.id });
           }}
         />
         <span className='versus'>VS</span>
@@ -111,11 +120,9 @@ export default function GameRecorder (props: GameRecorderProps) {
           teams={teams}
           players={players}
           label='Away'
-          onGoal={(g: IGoal) => {
-            // dispatch({ type: GameRecorderActions.setAwayGoals, payload: g });
-          }}
-          onTeamSelect={(t: ITeam) => {
-            dispatch({ type: GameRecorderActions.setAwayTeam, payload: t });
+          onGoal={updateGoal}
+          onTeamSelect={(t: Team) => {
+            dispatch({ type: GameRecorderActions.setAwayTeam, payload: t.id });
           }}
         />
       </div>

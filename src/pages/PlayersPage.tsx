@@ -30,7 +30,7 @@ export default function PlayersPage() {
               <tr key={p.id}>
                 <td>{index + 1}</td>
                 <td>{p.fullName}</td>
-                <td>{p.goalsScoredCount || 0}</td>
+                <td>{p.goalsScoredCount}</td>
                 <td>{teamNameById(p.teamId)}</td>
               </tr>
             );

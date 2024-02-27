@@ -4,13 +4,14 @@ import { format } from 'date-fns';
 import { DocumentData } from 'firebase/firestore';
 import { StateContext } from '../context/StateContext';
 import { deleteGame } from '../database/dataActions';
+import { Match, Team } from '../types'
 
 export default function GamesPage() {
-  const { games } = useContext(StateContext);
+  const { games, teams } = useContext(StateContext);
   const navigate = useNavigate();
 
-  games.sort((a: DocumentData, b: DocumentData) => {
-    return new Date(b.data().date).getTime() - new Date(a.data().date).getTime();
+  games.sort((a: Match, b: Match) => {
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
   });
   return (
     <div className='GamesPage page'>
@@ -34,8 +35,19 @@ export default function GamesPage() {
               </tr>
             </thead>
             <tbody>
-              {games.map((g: DocumentData) => {
-                const { date = '', home, away, homeGoals, awayGoals } = g.data();
+              {games.map((g: Match) => {
+                // const { date = '', home, away, homeGoals, awayGoals } = g.data();
+                const date = g.date;
+                const home = teams.find( (t:Team) => {
+                  // console.log('foo ', g);
+                  if(g.homeId === t.id){
+                    // console.log({t});
+                  }
+                  return g.homeId === t.id;
+                });
+                const away = teams.find((t: Team) => g.awayId === t.id);
+                const homeGoals = g.homeGoals;
+                const awayGoals = g.awayGoals;
                 let formattedDate:string;
                 formattedDate = date ? format(
                   new Date(date.split('-').join('/')),

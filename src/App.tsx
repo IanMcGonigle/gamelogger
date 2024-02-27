@@ -1,7 +1,8 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { IPlayer, Player, ITeam, Team, IGoal, Goal, Match, IMatch } from './types';
 import { InitialGameState } from './reducers/GameRecorderReducer';
+import { AppStateReducer, initialAppState } from './reducers/AppStateReducer';
 import './App.scss';
 import logo from './images/logo-small.png';
 import { StateContext } from './context/StateContext';
@@ -13,7 +14,8 @@ import {
   query,
   DocumentData,
   updateDoc,
-  doc
+  doc,
+  DocumentReference
 } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainNavigation from './components/MainNavigation';
@@ -31,53 +33,37 @@ import AnimatedPage from './pages/AnimatedPage';
 
 
 function App() {
-
-  const [players, setPlayers] = useState<Player[] | []>([]);
-  const [teams, setTeams] = useState<Team[]>([]);
-  const [goals, setGoals] = useState<Goal[]>([]);
-  const [games, setGames] = useState<Match[]>([])
+  const [state, dispatch] = useReducer(AppStateReducer, initialAppState);
+  // const { goals, teams, players, games, gameState } = state;
 
   const loadGoals = async () => {
       const q = query(collection(db, 'goals'));
       onSnapshot(q, (querySnapshot) => {
-        const newGoals: Array<Goal> = querySnapshot.docs.filter( item => Boolean(item.data()?.name)).map((item) => {
-          const data = item.data() as IGoal;
-            return new Goal({...data, id: item.id});
-        });
-        setGoals(newGoals);
+        console.log('setting goals....');
+        dispatch({ type: 'goals', payload: querySnapshot?.docs || []});
       });
 
   }
   const loadTeams = async () => {
       const q = query(collection(db, 'teams'));
       onSnapshot(q, (querySnapshot) => {
-        const newTeams: Array<Team> = querySnapshot.docs.filter( item => Boolean(item.data()?.name)).map((item) => {
-          const data = item.data() as ITeam;
-            return new Team({...data, id:item.id}, games);
-        });
-        setTeams(newTeams);
+        dispatch({ type: 'teams', payload: querySnapshot?.docs || [] });
+        console.log('setting teams....');
       });
 
   }
   const loadPlayers = async () => {
     const q = query(collection(db,'players'));
     onSnapshot(q, (querySnapshot) => {
-      const newPlayers: Array<Player> = querySnapshot.docs.map((item) => {
-        const data = { ...item.data(), id: item.id } as IPlayer;
-        return new Player(data, goals);
-      });
-      setPlayers(newPlayers);
+      dispatch({ type: 'players', payload: querySnapshot?.docs || [] });
+      console.log('setting players....');
     });
   }
   const loadGames = async () => {
     const q = query(collection(db, 'games'));
     onSnapshot(q, (querySnapshot) => {
-      const newGames: Match[] = querySnapshot.docs.map( (item) => {
-        const data:IMatch = item.data() as IMatch;
-        return new Match({...data, id:item.id}, goals, teams);
-      });
-      console.log('set games')
-      setGames(newGames);
+      dispatch({ type: 'games', payload: querySnapshot?.docs || [] });
+      console.log('setting games....')
     });
   }
 
@@ -92,7 +78,13 @@ function App() {
 
   return (
     <StateContext.Provider
-      value={{ games, teams, players, gameState: InitialGameState, goals }}
+      value={{
+        games: state?.games,
+        teams: state?.teams,
+        players: state?.players,
+        gameState: state?.gameState,
+        goals: state?.goals,
+      }}
     >
       <div className='App'>
         <MainNavigation />
@@ -132,7 +124,7 @@ function App() {
           <Route
             path='add-game'
             element={
-              <AnimatedPage title='Add a game'>
+              <AnimatedPage title='Log a game'>
                 <AddGamePage />
               </AnimatedPage>
             }
@@ -140,7 +132,7 @@ function App() {
           <Route
             path='games/edit/:gameId'
             element={
-              <AnimatedPage title='EditGamePage'>
+              <AnimatedPage title='Log a game'>
                 <EditGamePage />
               </AnimatedPage>
             }

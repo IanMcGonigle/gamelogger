@@ -9,7 +9,6 @@ export interface IPlayer {
   lastName: string;
   jerseyNumber: string;
   teamId: string;
-  goals: Array<string>;
 }
 
 export class Player {
@@ -18,19 +17,17 @@ export class Player {
   lastName: string;
   jerseyNumber: string;
   teamId: string;
-  goals: Array<Goal>;
+  goals: Goal[];
 
-  constructor(data: IPlayer, goalData: Goal[] = []) {
+  constructor(data: IPlayer, goalData:Goal[] = []) {
     this.id = data.id || '';
     this.firstName = data.firstName;
     this.lastName = data.lastName;
     this.jerseyNumber = data.jerseyNumber;
     this.teamId = data.teamId;
-    this.goals = [];
-    // this.goals = [...data.goals].reduce((result: Goal[], id: string) => {
-    //   const currentGoal = goalData.find((g: Goal) => g.id === id);
-    //   return currentGoal ? [...result, currentGoal] : result;
-    // }, []);
+    this.goals = goalData.filter( (g:Goal) => {
+     return g.playerId === this.id
+    });
   }
   get fullName(): string {
     return `${this.jerseyNumber} ${this.firstName} ${this.lastName}`;
@@ -62,7 +59,7 @@ export interface IMatch {
   date: string;
   home: string;
   away: string;
-  goals: Array<string>;
+  goals: string[];
 }
 
 export class Match {
@@ -70,11 +67,11 @@ export class Match {
   date: string;
   homeId: string;
   awayId: string;
-  goals?: Array<Goal>;
-  homeGoals: Array<Goal>;
-  awayGoals: Array<Goal>;
+  goals?: Goal[] = [];
+  homeGoals: Goal[] =[];
+  awayGoals: Goal[] =[];
 
-  constructor(matchData: IMatch, goalData: Goal[] = [], teamData: Team[] = []) {
+  constructor(matchData: IMatch, goalData: Goal[] = []) {
     this.id = matchData.id || '';
     this.date = matchData.date;
     this.homeId = matchData.home;
@@ -151,9 +148,6 @@ export class Goal {
   penaltyKick: boolean;
 
   constructor(data: IGoal) {
-    if (data?.id) {
-      throw new Error('Goal Requires an ID in constructor');
-    }
     this.id = data?.id || '';
     this.matchId = data?.matchId || '';
     this.date = data.date;
@@ -181,7 +175,7 @@ export interface ITeam {
   id: string;
   name: string;
   badge?: string;
-  matches: Array<string>;
+  // matches: string[];
 }
 export class Team {
   id: string;
@@ -189,17 +183,13 @@ export class Team {
   matches: Match[];
   badge: string;
 
-  constructor(data: ITeam, gameData: Match[]) {
+  constructor(data: ITeam, gameData: Match[] = []) {
     this.id = data.id;
     this.name = data.name;
     this.badge = data.badge || '';
-    this.matches = gameData.reduce((result: Match[], game: Match) => {
-      if (data.matches.includes(game.id)) {
-        return [...result, game];
-      } else {
-        return result;
-      }
-    }, []);
+    this.matches = gameData.filter((game: Match) => {
+        return game.homeId === this.id || game.awayId === this.id;
+      });
   }
   getWins() {
     return this.matches.filter((g: Match) => {
@@ -225,7 +215,8 @@ export class Team {
     return {
       id: this.id,
       name: this.name,
-      matches: this.matches,
+      badge: this.badge,
+      matches: this.matches.map( (m:Match) => m.id),
     };
   }
 }
