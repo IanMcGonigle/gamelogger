@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer, useContext} from 'react';
+import React, { useCallback, useEffect, useReducer, useState } from 'react';
 import { format } from 'date-fns';
 import { setDoc,doc } from 'firebase/firestore';
 import { ITeam, Player, IGoal, Team, Goal,  } from '../types';
@@ -25,6 +25,7 @@ type GameRecorderProps = {
 export default function GameRecorder (props: GameRecorderProps) {
   const { teams, players, gameData, id, goals } = props;
   const [state, dispatch] = useReducer(GameRecorderReducer, gameData);
+  const [datePickerOpen, setDatePickerOpen] = useState<boolean>(false);
   const {
     date: matchDate,
     home: homeTeamId,
@@ -63,7 +64,7 @@ export default function GameRecorder (props: GameRecorderProps) {
   return (
     <div className='GameRecorder'>
       <div className='inputRow inputRow--centered'>
-        {matchDate && (
+        {matchDate && !datePickerOpen && (
           <h3
             className='gameDate'
             onDoubleClick={() => {
@@ -76,7 +77,7 @@ export default function GameRecorder (props: GameRecorderProps) {
             {format(new Date(matchDate.split('-').join('/')), 'PPPP')}
           </h3>
         )}
-        {!matchDate && (
+        {(!matchDate || datePickerOpen) && (
           <>
             <label className='gameDate' htmlFor='datePicker'>
               Select Match Date
@@ -84,6 +85,8 @@ export default function GameRecorder (props: GameRecorderProps) {
             <input
               id='datePicker'
               type='date'
+              onFocus={() => setDatePickerOpen(true)}
+              onBlur={() => setDatePickerOpen(false)}
               onChange={(e: React.FormEvent) => {
                 const dateInput: string = (e.target as HTMLInputElement).value;
                 dispatch({

@@ -48,7 +48,7 @@ const TeamGameSheet = (props: TeamGameSheetProps) => {
                       g.ownGoal ? ' goal-scored--own' : ''
                     }`}
                   >
-                    {player?.fullName}
+                    {player?.fullName || `${us.name} player`}
                     {g.ownGoal ? `(OG)` : ``}
                     {g.penaltyKick ? `(P)` : ``}
                   </li>

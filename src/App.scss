@@ -264,6 +264,7 @@ td {
     left: 50%;
     letter-spacing: -2px;
     transform: translateX(-50%);
+    z-index: 10;
 
     @media screen and (min-width: $screen-md) {
       font-size: 4rem;

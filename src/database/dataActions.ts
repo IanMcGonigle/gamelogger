@@ -10,7 +10,8 @@ import {
   writeBatch,
   query,
   collection,
-  where
+  where,
+  deleteDoc,
 } from 'firebase/firestore';
 import { db, colletionPlayers, colletionGoals } from '../database/firebase';
 import { GameState } from '../reducers/GameRecorderReducer';
@@ -86,6 +87,18 @@ export const incrementGoalsScored = async (playerData: Player, count:number) => 
   }
 };
 
+export const deletePlayer = async (id:string) => {
+  console.log('deleting player...');
+  try{
+    const playerRef = doc(db, 'players', id);
+    // const docSnap = await getDoc(playerRef);
+    await deleteDoc(playerRef);
+    return true;
+  }catch(error){
+    return false;
+  }
+}
+
 export const addGoalScored = async (goal:IGoal) => {
   console.log('Adding New Goal... ', goal)
 
@@ -98,18 +111,3 @@ export const addGoalScored = async (goal:IGoal) => {
     return error;
   }
 }
-
-const updateTeamStats = async (gameId: string, team:ITeam) => {
-  const teamRef = doc(db, 'teams', team.id);
-  const teamSnap = await getDoc(teamRef);
-  const matchesArr = teamSnap.data()?.matches || [];
-  const matches = matchesArr.filter((g: IMatch) => g?.id !== gameId);
-  const gameRef = doc(db, 'games', gameId);
-  const docSnap = await getDoc(gameRef);
-
-  await updateDoc(teamRef, {
-    matches: [...matches, { id:gameId, ...docSnap.data()}],
-  });
-
-  return;
-};

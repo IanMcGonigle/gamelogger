@@ -113,7 +113,7 @@ export class Match {
     if (this.draw) {
       return null;
     }
-    return forAway > forHome ? this.awayId : this.homeId;
+    return forAway < forHome ? this.awayId : this.homeId;
   }
 
   getData() {

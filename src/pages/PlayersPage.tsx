@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { deletePlayer } from '../database/dataActions';
 import { StateContext } from '../context/StateContext';
 import { Player, ITeam } from '../types';
 
@@ -22,6 +23,7 @@ export default function PlayersPage() {
             <th>Player</th>
             <th>Goals Scored</th>
             <th>Team</th>
+            <th>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
@@ -32,6 +34,19 @@ export default function PlayersPage() {
                 <td>{p.fullName}</td>
                 <td>{p.goalsScoredCount}</td>
                 <td>{teamNameById(p.teamId)}</td>
+                <td>
+                  <button
+                    title={`Delete ${p.fullName}`}
+                    onClick={(e) => {
+                      const message = `Are you sure you want to delete : ${p.fullName}?`;
+                      if (window.confirm(message)) {
+                        deletePlayer(p.id);
+                      }
+                    }}
+                  >
+                    &#x2716;
+                  </button>
+                </td>
               </tr>
             );
           })}

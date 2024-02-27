@@ -10,6 +10,12 @@ export default function TeamPage() {
   const { teams, games, players} = useContext(StateContext) as State;;
   const selectedTeam:Team = useSelectedTeam();
   teams.sort( (t1:Team, t2:Team) => t2.getPoints() - t1.getPoints() );
+  const teamGames = games.filter(
+    (match: Match) =>
+      match.homeId === selectedTeam.id || match.awayId === selectedTeam.id
+  ).sort((a:Match, b:Match) => {
+    return new Date(b.date).valueOf() - new Date(a.date).valueOf();
+  });
 
   const renderGoals = (teamGoals:Goal[]): React.ReactElement => {
     return (
@@ -17,7 +23,7 @@ export default function TeamPage() {
         {teamGoals?.map((g: Goal) => {
           const { ownGoal, penaltyKick, playerId } = g;
           const player = players.find((p: Player) => p.id === playerId);
-          let display = player?.fullName;
+          let display = `#${player?.fullName}`;
           if (ownGoal) display += ' (OG)';
           if (penaltyKick) display += ' (P)';
           return <li>{display}</li>;
@@ -45,17 +51,15 @@ export default function TeamPage() {
               </tr>
             </thead>
             <tbody>
-              {
-                games.filter( (match:Match) => (match.homeId === selectedTeam.id || match.awayId === selectedTeam.id))
-                .map((match: Match) => {
+              {teamGames.map((match: Match, index: number) => {
                 const selId = selectedTeam?.id;
                 const g: Match = match;
                 const { homeId, homeGoals, awayGoals, draw } = g;
                 const location = homeId === selId ? 'Home' : 'Away';
                 const opponentId = homeId === selId ? g.awayId : g.homeId;
-                const opponent = teams.find( (t:Team) => {
+                const opponent = teams.find((t: Team) => {
                   return t.id === opponentId;
-                })
+                });
                 let points = '0';
                 let outcome;
                 if (draw) {

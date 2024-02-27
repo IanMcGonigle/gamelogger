@@ -26,7 +26,6 @@ export default function TeamsPage() {
             const wins = t.getWins().length;
             const loss = t.getLosses().length;
             const draws = t.getDraws().length;
-            // console.log(t)
             return (
               <tr key={t.id}>
                 <td>
