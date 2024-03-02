@@ -39,10 +39,6 @@ export default function GamesPage() {
                 // const { date = '', home, away, homeGoals, awayGoals } = g.data();
                 const date = g.date;
                 const home = teams.find( (t:Team) => {
-                  // console.log('foo ', g);
-                  if(g.homeId === t.id){
-                    // console.log({t});
-                  }
                   return g.homeId === t.id;
                 });
                 const away = teams.find((t: Team) => g.awayId === t.id);

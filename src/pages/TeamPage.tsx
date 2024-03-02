@@ -2,22 +2,13 @@ import React, { useContext } from 'react';
 import { Link} from 'react-router-dom';
 import { format } from 'date-fns';
 import { StateContext, State } from '../context/StateContext';
-import { Team, ITeam, IMatch, IGoal, Match, Goal, Player } from '../types';
+import { Team, Match, Goal, Player } from '../types';
 import { useSelectedTeam } from '../hooks/useSelectedTeam';
-import { DocumentReference } from 'firebase/firestore';
 
 export default function TeamPage() {
   const { teams, games, players} = useContext(StateContext) as State;;
   const selectedTeam:Team = useSelectedTeam();
-  teams.sort( (t1:Team, t2:Team) => t2.getPoints() - t1.getPoints() );
-  const teamGames = games.filter(
-    (match: Match) =>
-      match.homeId === selectedTeam.id || match.awayId === selectedTeam.id
-  ).sort((a:Match, b:Match) => {
-    return new Date(b.date).valueOf() - new Date(a.date).valueOf();
-  });
-
-  const renderGoals = (teamGoals:Goal[]): React.ReactElement => {
+  const renderGoals = (teamGoals: Goal[]): React.ReactElement => {
     return (
       <ul className='goalList'>
         {teamGoals?.map((g: Goal) => {
@@ -30,8 +21,14 @@ export default function TeamPage() {
         })}
       </ul>
     );
-  }
+  };
+  const teamGames = games.filter((match: Match) =>
+      match.homeId === selectedTeam.id || match.awayId === selectedTeam.id
+  ).sort((a:Match, b:Match) => {
+    return new Date(b.date).valueOf() - new Date(a.date).valueOf();
+  });
 
+  teams.sort((t1: Team, t2: Team) => t2.getPoints() - t1.getPoints());
   return (
     <div className='Team page'>
       {selectedTeam && (
