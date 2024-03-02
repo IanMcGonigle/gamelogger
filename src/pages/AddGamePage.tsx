@@ -8,15 +8,15 @@ import {
 import {
   colletionGames,
 } from '../database/firebase';
+import { Goal } from '../types';
 import GameRecorder from '../components/GameRecorder';
 
 export default function AddGamePage() {
   const [currentGame, setCurrentGame] = useState<DocumentData | undefined>();
-  const { teams, players, gameState } = useContext(StateContext);
+  const { teams, players, gameState, goals } = useContext(StateContext);
 
   useEffect( () => {
     const docRef = doc(colletionGames);
-    console.log(docRef);
     setCurrentGame(docRef);
   }, [])
   return (
@@ -27,6 +27,7 @@ export default function AddGamePage() {
           players={players}
           gameData={gameState}
           id={currentGame.id}
+          goals={goals.filter( (g:Goal) => g.matchId === currentGame.id)}
         />
       )}
     </div>

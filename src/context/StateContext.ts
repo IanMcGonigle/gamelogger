@@ -1,11 +1,12 @@
 import React, { createContext } from 'react';
 import { GameState } from '../reducers/GameRecorderReducer';
-import { IGame, IPlayer, ITeam } from '../types';
+import { Match, Player, Team, Goal } from '../types';
 
 export type State = {
-  teams: Array<ITeam>;
-  players: Array<IPlayer>;
-  games: Array<IGame>;
+  teams: Array<Team>;
+  players: Array<Player>;
+  games: Array<Match>;
+  goals: Array<Goal>;
   gameState?: GameState | undefined;
 };
 

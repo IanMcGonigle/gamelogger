@@ -1,7 +1,8 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { IPlayer, ITeam, Team } from './types';
+import { IPlayer, Player, ITeam, Team, IGoal, Goal, Match, IMatch } from './types';
 import { InitialGameState } from './reducers/GameRecorderReducer';
+import { AppStateReducer, initialAppState } from './reducers/AppStateReducer';
 import './App.scss';
 import logo from './images/logo-small.png';
 import { StateContext } from './context/StateContext';
@@ -13,7 +14,8 @@ import {
   query,
   DocumentData,
   updateDoc,
-  doc
+  doc,
+  DocumentReference
 } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
 import MainNavigation from './components/MainNavigation';
@@ -31,58 +33,58 @@ import AnimatedPage from './pages/AnimatedPage';
 
 
 function App() {
+  const [state, dispatch] = useReducer(AppStateReducer, initialAppState);
+  // const { goals, teams, players, games, gameState } = state;
 
-  const [players, setPlayers] = useState<IPlayer[] | []>([]);
-  const [teams, setTeams] = useState<ITeam[]>([]);
-  const [games, setGames] = useState<DocumentData[]>([])
+  const loadGoals = async () => {
+      const q = query(collection(db, 'goals'));
+      onSnapshot(q, (querySnapshot) => {
+        console.log('setting goals....');
+        dispatch({ type: 'goals', payload: querySnapshot?.docs || []});
+      });
 
+  }
   const loadTeams = async () => {
       const q = query(collection(db, 'teams'));
       onSnapshot(q, (querySnapshot) => {
-        const newTeams: Array<ITeam> = querySnapshot.docs.filter( item => Boolean(item.data()?.name)).map((item) => {
-          const { name, badge, matches = [] } = item.data() as ITeam;
-            return { id: item.id, name, matches, badge } as ITeam;
-        });
-        setTeams(newTeams);
+        dispatch({ type: 'teams', payload: querySnapshot?.docs || [] });
+        console.log('setting teams....');
       });
 
   }
   const loadPlayers = async () => {
     const q = query(collection(db,'players'));
     onSnapshot(q, (querySnapshot) => {
-      const newPlayers: Array<IPlayer> = querySnapshot.docs.map((item) => {
-        const { firstName, lastName, jerseyNumber, teamId, goals } = item.data();
-        return {
-          id: item.id,
-          firstName,
-          lastName,
-          jerseyNumber,
-          teamId,
-          goals,
-        };
-      });
-      setPlayers(newPlayers);
+      dispatch({ type: 'players', payload: querySnapshot?.docs || [] });
+      console.log('setting players....');
     });
   }
   const loadGames = async () => {
     const q = query(collection(db, 'games'));
     onSnapshot(q, (querySnapshot) => {
-      console.log('set games')
-      setGames(querySnapshot.docs);
+      dispatch({ type: 'games', payload: querySnapshot?.docs || [] });
+      console.log('setting games....')
     });
   }
 
   useEffect(() => {
+    loadGoals();
     loadTeams();
     loadPlayers();
     loadGames();
-  }, []);
+  },[]);
 
   const myLocation = useLocation();
 
   return (
     <StateContext.Provider
-      value={{ games, teams, players, gameState: InitialGameState }}
+      value={{
+        games: state?.games,
+        teams: state?.teams,
+        players: state?.players,
+        gameState: state?.gameState,
+        goals: state?.goals,
+      }}
     >
       <div className='App'>
         <MainNavigation />
@@ -122,7 +124,7 @@ function App() {
           <Route
             path='add-game'
             element={
-              <AnimatedPage title='Add a game'>
+              <AnimatedPage title='Log a game'>
                 <AddGamePage />
               </AnimatedPage>
             }
@@ -130,7 +132,7 @@ function App() {
           <Route
             path='games/edit/:gameId'
             element={
-              <AnimatedPage title='EditGamePage'>
+              <AnimatedPage title='Log a game'>
                 <EditGamePage />
               </AnimatedPage>
             }

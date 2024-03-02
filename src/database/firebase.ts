@@ -23,5 +23,6 @@ export const db:Firestore = getFirestore(app);
 export const colletionTeams = collection(db, 'teams');
 export const colletionPlayers = collection(db, 'players');
 export const colletionGames = collection(db, 'games');
+export const colletionGoals = collection(db, 'goals');
 
 export default db;

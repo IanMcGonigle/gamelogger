@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { StateContext } from '../context/StateContext';
-import { Team, ITeam } from '../types';
+import { Team, ITeam, IMatch } from '../types';
+import { DocumentReference, QueryDocumentSnapshot } from 'firebase/firestore';
 
 export default function TeamsPage() {
-  const { teams:teamData } = useContext(StateContext);
-  const teams = teamData.map((t: ITeam) => new Team({...t}));
+  const { teams, games } = useContext(StateContext);
   teams.sort( (t1:Team, t2:Team) => t2.getPoints() - t1.getPoints() );
 
   return (
@@ -27,7 +27,7 @@ export default function TeamsPage() {
             const loss = t.getLosses().length;
             const draws = t.getDraws().length;
             return (
-              <tr>
+              <tr key={t.id}>
                 <td>
                   <Link to={`/teams/${t.id}`}>
                     <img src={t.badge} alt={t.name} width='50px' />
